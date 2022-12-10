@@ -1,4 +1,4 @@
 aws_lambda_event==1.0.1
-aws_codecommit==1.1.1
+aws_codecommit==1.1.2
 aws_codebuild==0.2.1
 boto_session_manager==1.2.1

@@ -232,7 +232,7 @@ This step will allow CodeBuild job run to send lots of events such as ``build su
 
 **Create CI-Bot Lambda Function**
 
-1. Go to the ``aws_ci_bot Release <https://github.com/MacHu-GWU/aws_ci_bot-project/releases>`_, download the latest ``aws_ci_bot-${version}-lambda-deployment-package.zip`` file.
+1. Go to the `aws_ci_bot Release <https://github.com/MacHu-GWU/aws_ci_bot-project/releases>`_, download the latest ``aws_ci_bot-${version}-lambda-deployment-package.zip`` file.
 2. Go to `AWS Lambda Function Console <https://console.aws.amazon.com/lambda/home?#/functions>`_, click "Create function".
 3. Check the following configuration:
     - Function name: ``ci-bot``

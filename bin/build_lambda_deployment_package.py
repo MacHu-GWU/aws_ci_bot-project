@@ -20,10 +20,10 @@ path_lambda_handler_in_deployment_package = (
 
 bin_pip = "pip"
 
-if dir_build_deployment_package.exists():
-    shutil.rmtree(dir_build_deployment_package)
+if dir_build_lambda.exists():
+    shutil.rmtree(dir_build_lambda)
 else:
-    dir_build_deployment_package.mkdir(parents=True)
+    dir_build_lambda.mkdir(parents=True)
 
 
 def get_aws_ci_bot_version():

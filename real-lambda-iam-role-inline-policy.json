@@ -15,16 +15,17 @@
             "Sid": "VisualEditor1",
             "Effect": "Allow",
             "Action": [
-                "codebuild:BatchGetBuildBatches",
                 "s3:PutObject",
+                "codecommit:GetCommit",
+                "codecommit:GetFile",
                 "codecommit:PostCommentForPullRequest",
+                "codecommit:PostCommentForComparedCommit",
+                "codecommit:PostCommentReply",
                 "codecommit:UpdateComment",
+                "codebuild:BatchGetBuildBatches",
                 "codebuild:StartBuildBatch",
                 "codebuild:StartBuild",
-                "codecommit:PostCommentForComparedCommit",
-                "codebuild:BatchGetBuilds",
-                "codecommit:GetFile",
-                "codecommit:PostCommentReply"
+                "codebuild:BatchGetBuilds"
             ],
             "Resource": [
                 "arn:aws:codebuild:us-east-2:669508176277:project/*",

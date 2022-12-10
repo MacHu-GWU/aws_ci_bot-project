@@ -243,8 +243,10 @@ class CodeCommitEventHandler:
             for key, value in env_var.items()
         ]
         if build_job_config.is_batch_job:
+            logger.info("invoke codebuild.start_build_batch API")
             res = start_build_batch(**kwargs)
         else:
+            logger.info("invoke codebuild.start_build API")
             res = start_build(**kwargs)
         build_job_run = BuildJobRun.from_start_build_response(res)
         return build_job_run

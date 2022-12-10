@@ -57,6 +57,8 @@ It comes with a lot more advanced features that is highly customizable:
 2. Highly customizable trigger rules, allow you to use ``branch name``, ``commit message`` and everything to write your own rules to define "**when to trigger build and what exactly to build**", in pure python IF ELSE syntax.
 3. Allow to use a Human-in-loop GUI to approve, deny build job run, from your browser or your cell phone, please see my ``aws_cicd_hil-project`` repo.
 
+.. image:: ./images/comment-bot.png
+
 .. contents::
     :class: this-will-duplicate-information-and-it-is-still-useful-here
     :depth: 1
@@ -346,6 +348,8 @@ You can easily define your own rules to customize this behavior by chaging this 
 5. **Switch to** "Activity" Tab, **you will see the CI bot just triggered a CodeBuild job run and automatically posted a comment to the PR**, you can click on the link to jump to the CodeBuild job run, or to the detailed changes for the commit. **After a while, when the job run Success or Failed, the CI bot will automatically reply to the comment and tell your the result**.
 
 **Sample Comment**
+
+.. note::
 
     🌴 A build run is triggered, let's relax.
 

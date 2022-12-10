@@ -349,8 +349,6 @@ You can easily define your own rules to customize this behavior by chaging this 
 
 **Sample Comment**
 
-.. note::
-
     🌴 A build run is triggered, let's relax.
 
     - build run id: `aws_ci_bot-test:cd78cc7e-f538-405e-b4a0-5dddf96fe0f7 <https://us-east-2.console.aws.amazon.com/codesuite/codebuild/111122223333/projects/aws_ci_bot-test/build/aws_ci_bot-test:cd78cc7e-f538-405e-b4a0-5dddf96fe0f7/?region=us-east-2>`_

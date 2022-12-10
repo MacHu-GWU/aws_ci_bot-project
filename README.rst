@@ -52,6 +52,11 @@
 Welcome to ``aws_ci_bot`` Documentation
 ==============================================================================
 
+.. contents::
+    :class: this-will-duplicate-information-and-it-is-still-useful-here
+    :depth: 1
+    :local:
+
 
 1. How it Work
 ------------------------------------------------------------------------------
@@ -60,6 +65,10 @@ Welcome to ``aws_ci_bot`` Documentation
 
 2. How to Deploy
 ------------------------------------------------------------------------------
+.. contents::
+    :class: this-will-duplicate-information-and-it-is-still-useful-here
+    :depth: 1
+    :local:
 
 
 2.1. Create SNS Topic
@@ -238,6 +247,10 @@ This deployment assume that you have one git repo to work on. But if you have mu
 
 3. Test This Solution
 ------------------------------------------------------------------------------
+.. contents::
+    :class: this-will-duplicate-information-and-it-is-still-useful-here
+    :depth: 1
+    :local:
 
 
 3.1 Prepare necessary config file in your CodeCommit repo
@@ -293,7 +306,7 @@ Now the repo is all set. In production, we should also do this before checking i
 
 
 3.2 Test the CI Bot in a Pull Request
-------------------------------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Now we want to simulate a scenario that a developer created a new branch, and started a Pull Request to merge to the ``main`` branch.
 
 In this solution, the trigger rules are defined in the `do_we_trigger_build <https://github.com/MacHu-GWU/aws_ci_bot-project/blob/main/aws_ci_bot/codecommit_and_codebuild.py>`_ function (click this link and search it). It only triggers a CI build job when it is a event of:

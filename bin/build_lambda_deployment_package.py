@@ -36,7 +36,7 @@ def get_aws_ci_bot_version():
 __version__ = get_aws_ci_bot_version()
 
 path_lambda_deployment_package = (
-    dir_build_lambda / f"aws_ci_bot-lambda-{__version__}.zip"
+    dir_build_lambda / f"aws_ci_bot-{__version__}-lambda-deployment-package.zip"
 )
 
 

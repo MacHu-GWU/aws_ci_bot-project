@@ -1,0 +1,36 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogStream",
+                "logs:CreateLogGroup",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "codebuild:BatchGetBuildBatches",
+                "s3:PutObject",
+                "codecommit:PostCommentForPullRequest",
+                "codecommit:UpdateComment",
+                "codebuild:StartBuildBatch",
+                "codebuild:StartBuild",
+                "codecommit:PostCommentForComparedCommit",
+                "codebuild:BatchGetBuilds",
+                "codecommit:GetFile",
+                "codecommit:PostCommentReply"
+            ],
+            "Resource": [
+                "arn:aws:codebuild:us-east-2:669508176277:project/*",
+                "arn:aws:codecommit:us-east-2:669508176277:*",
+                "arn:aws:s3:::669508176277-us-east-2-artifacts/*"
+            ]
+        }
+    ]
+}

@@ -1,19 +1,53 @@
 # -*- coding: utf-8 -*-
 
+import typing as T
 import json
 import dataclasses
 
 from aws_codecommit import (
     CodeCommitEvent,
-    better_boto,
+    better_boto as cc_boto,
     is_certain_semantic_commit,
     SemanticCommitEnum,
 )
-from aws_codebuild import BuildJobRun, start_build, start_build_batch
+
+from aws_codebuild import (
+    CodeBuildEvent,
+    BuildJobRun,
+    better_boto as cb_boto,
+    start_build,
+    start_build_batch,
+)
 from boto_session_manager import BotoSesManager, AwsServiceEnum
 
-from .. import logger
-from ..ci.codebuild import BuildJobConfig, CodebuildConfig
+from . import logger
+
+
+@dataclasses.dataclass
+class BuildJobConfig:
+    project_name: str = dataclasses.field()
+    is_batch_job: bool = dataclasses.field()
+    buildspec: T.Optional[str] = dataclasses.field(default=None)
+    env_var: dict = dataclasses.field(default_factory=dict)
+
+    @classmethod
+    def from_dict(cls, dct: dict) -> "BuildJobConfig":
+        return cls(
+            project_name=dct["project_name"],
+            is_batch_job=dct["is_batch_job"],
+            buildspec=dct.get("buildspec"),
+            env_var=dct.get("env_var", {}),
+        )
+
+
+@dataclasses.dataclass
+class CodebuildConfig:
+    jobs: T.List[BuildJobConfig] = dataclasses.field(default_factory=list)
+
+    @classmethod
+    def from_dict(cls, dct: dict) -> "CodebuildConfig":
+        return cls(jobs=[BuildJobConfig.from_dict(d) for d in dct["jobs"]])
+
 
 CI_DATA_PREFIX = "CI_DATA_"
 
@@ -24,8 +58,8 @@ class CIData:
     CI related data, will be available in environment variable.
     """
 
-    commit_message: str = ""
-    comment_id: str = ""
+    commit_message: T.Optional[str] = dataclasses.field(default=None)
+    comment_id: T.Optional[str] = dataclasses.field(default=None)
 
     def to_env_var(
         self,
@@ -128,7 +162,7 @@ class CodeCommitEventHandler:
             return False
 
     def get_codebuild_config(self) -> CodebuildConfig:
-        file = better_boto.get_file(
+        file = cc_boto.get_file(
             bsm=self.bsm,
             repo_name=self.cc_event.repo_name,
             file_path="codebuild-config.json",
@@ -204,7 +238,7 @@ class CodeCommitEventHandler:
         build_job_config: BuildJobConfig,
     ):
         # post an initial comment to the PR
-        comment = better_boto.post_comment_for_pull_request(
+        comment = cc_boto.post_comment_for_pull_request(
             bsm=self.bsm,
             pr_id=self.cc_event.pr_id,
             repo_name=self.cc_event.repo_name,
@@ -224,7 +258,7 @@ class CodeCommitEventHandler:
         )
 
         # update the first comment with build job run console url
-        better_boto.update_comment(
+        cc_boto.update_comment(
             bsm=self.bsm,
             comment_id=comment.comment_id,
             content=self.get_comment_body_after_run_build_job(build_job_run),
@@ -252,3 +286,61 @@ class CodeCommitEventHandler:
                 self.run_build_job_for_pr_event(job)
             else:
                 self.run_build_job_for_non_pr_event(job)
+
+
+@dataclasses.dataclass
+class CodeBuildEventHandler:
+    bsm: BotoSesManager = dataclasses.field()
+    cb_event: CodeBuildEvent = dataclasses.field()
+
+    def log_cb_event(self):
+        logger.info("Received CodeBuild event")
+        logger.info(f"- detected event type = {self.cb_event.event_type!r}")
+        logger.info(f"- build job run url = {self.cb_event.buildRunConsoleUrl}")
+
+    def do_we_ignore_this(self) -> bool:
+        return not (
+            self.cb_event.is_state_in_progress
+            or self.cb_event.is_state_failed
+            or self.cb_event.is_state_succeeded
+        )
+
+    def get_build_job_run_details(self) -> dict:
+        cb_client = self.bsm.get_client(AwsServiceEnum.CodeBuild)
+        return cb_client.batch_get_builds(
+            ids=[
+                self.cb_event.buildUUID,
+            ]
+        )
+
+    def post_build_status_to_pr_comment(self, build_job_run_details: dict):
+        env_var = {
+            dct["name"]: dct["value"]
+            for dct in build_job_run_details["builds"][0]["environment"][
+                "environmentVariables"
+            ]
+        }
+        ci_data = CIData.from_env_var(env_var)
+        if ci_data.comment_id:
+            if self.cb_event.build_status == "SUCCEEDED":
+                comment = "🟢 Build Run SUCCEEDED"
+            elif self.cb_event.build_status == "FAILED":
+                comment = "🔴 Build Run FAILED"
+            elif self.cb_event.build_status == "STOPPED":
+                comment = "⚫ Build Run STOPPED"
+            else:
+                raise NotImplementedError
+            cc_boto.post_comment_reply(
+                bsm=self.bsm,
+                in_reply_to=ci_data.comment_id,
+                content=comment,
+            )
+
+    def execute(self):
+        self.log_cb_event()
+
+        if self.do_we_ignore_this():
+            return
+
+        build_job_run_details = self.get_build_job_run_details()
+        self.post_build_status_to_pr_comment(build_job_run_details)

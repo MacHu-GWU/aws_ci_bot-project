@@ -54,6 +54,17 @@ Welcome to ``aws_ci_bot`` Documentation
 
 Documentation for ``aws_ci_bot``.
 
+AWS CodeBuild IAM Role
+
+- name: ``aws_ci_bot-test-codebuild``
+- AWS managed policy:
+    - ``AWSCodeCommitPowerUser``
+    - ``CloudWatchFullAccess``
+
+AWS Lambda IAM Role
+
+- name: ``aws_ci_bot-test-lambda``
+- inline policy: ```sample-lambda-iam-role-inline-policy.json``
 
 .. _install:
 

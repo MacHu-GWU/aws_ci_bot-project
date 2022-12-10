@@ -5,12 +5,12 @@ import logging
 logger = logging.getLogger("ci_bot")
 logger.setLevel(logging.DEBUG)
 
-stream_handler = logging.StreamHandler()
-stream_handler.setLevel(logging.INFO)
-stream_handler.setFormatter(
-    logging.Formatter("%(asctime)s; %(levelname)-8s; %(message)s")
-)
-logger.addHandler(stream_handler)
+# stream_handler = logging.StreamHandler()
+# stream_handler.setLevel(logging.INFO)
+# stream_handler.setFormatter(
+#     logging.Formatter("%(asctime)s; %(levelname)-8s; %(message)s")
+# )
+# logger.addHandler(stream_handler)
 
 
 def header(msg: str, char: str, length: int, corner_char=""):

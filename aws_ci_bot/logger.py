@@ -4,7 +4,11 @@ import logging
 
 logger = logging.getLogger("ci_bot")
 logger.setLevel(logging.DEBUG)
-
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 # stream_handler = logging.StreamHandler()
 # stream_handler.setLevel(logging.INFO)
 # stream_handler.setFormatter(

@@ -100,7 +100,7 @@ class CodeCommitEventHandler:
     cc_event: CodeCommitEvent = dataclasses.field()
 
     def log_cc_event(self):
-        logger.info("Received CodeCommit event")
+        logger.header("Handle CodeCommit event", "-", 60)
         logger.info(f"- detected event type = {self.cc_event.event_type!r}")
         logger.info(f"- event description = {self.cc_event.event_description!r}")
 
@@ -111,6 +111,8 @@ class CodeCommitEventHandler:
         and for any Git Workflow. This function allow you to customize your own
         git branching rule and git commit rule, decide when to trigger the build.
         """
+        logger.header("Detect whether we should trigger build", "-", 60)
+
         # won't trigger build direct commit
         if self.cc_event.is_commit_event:
             logger.info(
@@ -173,10 +175,13 @@ class CodeCommitEventHandler:
         """
         Get the CodebuildConfig json file from the CodeCommit repo.
         """
+        file_path = "codebuild-config.json"
+        logger.info(f"Get codebuild config from {file_path!r}")
+
         file = cc_boto.get_file(
             bsm=self.bsm,
             repo_name=self.cc_event.repo_name,
-            file_path="codebuild-config.json",
+            file_path=file_path,
         )
         return CodebuildConfig.from_dict(json.loads(file.get_text()))
 
@@ -290,6 +295,7 @@ class CodeCommitEventHandler:
         if self.do_we_trigger_build() is False:
             return
 
+        logger.header("Trigger build jobs", "-", 60)
         cb_config = self.get_codebuild_config()
 
         for job in cb_config.jobs:
@@ -305,7 +311,7 @@ class CodeBuildEventHandler:
     cb_event: CodeBuildEvent = dataclasses.field()
 
     def log_cb_event(self):
-        logger.info("Received CodeBuild event")
+        logger.header("Handle CodeBuild event", "-", 60)
         logger.info(f"- detected event type = {self.cb_event.event_type!r}")
         logger.info(f"- build job run url = {self.cb_event.buildRunConsoleUrl}")
 
@@ -353,5 +359,6 @@ class CodeBuildEventHandler:
         if self.do_we_ignore_this():
             return
 
+        logger.header("Post job run status", "-", 60)
         build_job_run_details = self.get_build_job_run_details()
         self.post_build_status_to_pr_comment(build_job_run_details)

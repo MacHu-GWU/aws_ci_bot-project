@@ -24,12 +24,14 @@ bsm = BotoSesManager()
 
 
 def lambda_handler(event: dict, context: dict):
-    logger.header("START", "=", 80)
+    logger.header("START", "=", 60)
 
+    logger.header("Parse SNS message", "-", 60)
     message_dict = extract_sns_message_dict(event)
 
     if message_dict["source"] == "aws.codecommit":
         ci_event = CodeCommitEvent.from_event(message_dict)
+        ci_event.bsm = bsm
     elif message_dict["source"] == "aws.codebuild":
         ci_event = CodeBuildEvent.from_event(message_dict)
     else:  # pragma: no cover

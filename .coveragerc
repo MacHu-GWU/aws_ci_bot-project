@@ -4,10 +4,10 @@
 omit =
     aws_ci_bot/_version.py
     aws_ci_bot/cli.py
-    aws_ci_bot/pkg/*
+    aws_ci_bot/console.py
+    aws_ci_bot/lbd.py
     aws_ci_bot/docs/*
     aws_ci_bot/tests/*
-    aws_ci_bot/handlers/*
 
 [report]
 # Regexes for lines to exclude from consideration

@@ -42,6 +42,10 @@ class BuildJobConfig:
 
 @dataclasses.dataclass
 class CodebuildConfig:
+    """
+    The codebuild-config.json file that defines which CodeBuild project
+    it should use to run CI job.
+    """
     jobs: T.List[BuildJobConfig] = dataclasses.field(default_factory=list)
 
     @classmethod
@@ -56,6 +60,10 @@ CI_DATA_PREFIX = "CI_DATA_"
 class CIData:
     """
     CI related data, will be available in environment variable.
+
+    It is a simple data container that allow you to pass data into
+    codebuild job run, or read CIData from env var when you are running
+    automation script in job run.
     """
 
     commit_message: T.Optional[str] = dataclasses.field(default=None)
@@ -162,6 +170,9 @@ class CodeCommitEventHandler:
             return False
 
     def get_codebuild_config(self) -> CodebuildConfig:
+        """
+        Get the CodebuildConfig json file from the CodeCommit repo.
+        """
         file = cc_boto.get_file(
             bsm=self.bsm,
             repo_name=self.cc_event.repo_name,

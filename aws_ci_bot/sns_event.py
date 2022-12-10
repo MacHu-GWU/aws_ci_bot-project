@@ -9,46 +9,55 @@ from aws_codebuild import CodeBuildEvent
 from aws_codecommit import CodeCommitEvent
 
 from .console import get_s3_console_url
+from . import logger
 
 
-def parse_sns_event(event: dict) -> T.Union[CodeCommitEvent, CodeBuildEvent]:
+def extract_sns_message_dict(event: dict) -> dict:
+    """
+    :param event: the original lambda function input payload
+    :return: the sns message data in dict
+    """
     sns_event = SNSTopicNotificationEvent(event)
-    ci_event: dict = json.loads(sns_event.records[0].message)
-    if ci_event["source"] == "aws.codecommit":
-        return CodeCommitEvent.from_event(ci_event)
-    elif ci_event["source"] == "aws.codebuild":
-        return CodeBuildEvent.from_event(ci_event)
-    else:  # pragma: no cover
-        raise NotImplementedError
+    return json.loads(sns_event.records[0].message)
 
 
 def encode_partition_key(dt: datetime) -> str:
     """
     Figure out the s3 partition part based on the given datetime.
     """
-    return "/".join([
-        f"year={dt.year}/"
-        f"month={str(dt.month).zfill(2)}/"
-        f"day={str(dt.day).zfill(2)}/"
-    ])
+    return "/".join(
+        [
+            f"year={dt.year}/"
+            f"month={str(dt.month).zfill(2)}/"
+            f"day={str(dt.day).zfill(2)}/"
+        ]
+    )
 
 
 def upload_ci_event(
+    s3_client,
     event_dict: dict,
     event_obj: T.Union[CodeCommitEvent, CodeBuildEvent],
-    s3_client,
     bucket: str,
     prefix: str,
-    logger,
     verbose: bool = True,
 ) -> str:
     """
+    Upload CI/CD lambda event to S3 as a backup.
 
-    :param ci_event:
+    :param s3_client:
+    :param event_dict:
     :param event_obj:
+    :param bucket:
+    :param prefix:
     :param verbose:
     :return: S3 uri
     """
+    if verbose:
+        logger.info("Upload CI event to S3")
+
+    if prefix.endswith("/"):
+        prefix = prefix[:-1]
 
     utc_now = datetime.utcnow()
     time_str = utc_now.strftime("%Y-%m-%dT%H-%M-%S.%f")
@@ -65,7 +74,7 @@ def upload_ci_event(
             f"{encode_partition_key(utc_now)}/"
             f"{time_str}_{event_obj.buildId}.json"
         )
-    else: # pragma: no cover
+    else:  # pragma: no cover
         raise NotImplementedError
 
     s3_client.put_object(
@@ -76,6 +85,6 @@ def upload_ci_event(
 
     console_url = get_s3_console_url(bucket=bucket, prefix=s3_key)
     if verbose:
-        logger.info(f"  preview event at: {console_url}")
+        logger.info(f"preview event at: {console_url}", 1)
 
     return f"s3://{bucket}/{s3_key}"

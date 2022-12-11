@@ -2,6 +2,7 @@
 
 import typing as T
 import json
+import enum
 import dataclasses
 
 from aws_codecommit import (
@@ -14,11 +15,10 @@ from aws_codecommit import (
 from aws_codebuild import (
     CodeBuildEvent,
     BuildJobRun,
-    better_boto as cb_boto,
     start_build,
     start_build_batch,
 )
-from boto_session_manager import BotoSesManager, AwsServiceEnum
+from boto_session_manager import BotoSesManager
 
 from . import logger
 
@@ -46,6 +46,7 @@ class CodebuildConfig:
     The codebuild-config.json file that defines which CodeBuild project
     it should use to run CI job.
     """
+
     jobs: T.List[BuildJobConfig] = dataclasses.field(default_factory=list)
 
     @classmethod
@@ -64,8 +65,14 @@ class CIData:
     It is a simple data container that allow you to pass data into
     codebuild job run, or read CIData from env var when you are running
     automation script in job run.
+
+    :param comment_id: the comment is the thread created when received
+        CodeCommit event. it will send to the Environment Variable for CodeBuild
+        job run, and all of sub-sequence CodeBuild event will reply
+        to this comment.
     """
 
+    event_s3_console_url: str = dataclasses.field(default=None)
     commit_message: T.Optional[str] = dataclasses.field(default=None)
     comment_id: T.Optional[str] = dataclasses.field(default=None)
 
@@ -75,8 +82,9 @@ class CIData:
     ) -> dict:
         env_var = dict()
         for attr, value in dataclasses.asdict(self).items():
-            key = (prefix + attr).upper()
-            env_var[key] = value
+            if value is not None:
+                key = (prefix + attr).upper()
+                env_var[key] = value
         return env_var
 
     @classmethod
@@ -94,18 +102,30 @@ class CIData:
         return cls(**kwargs)
 
 
+class CodeCommitHandlerActionEnum(str, enum.Enum):
+    nothing = "nothing"
+    start_build = "start_build"
+
+
 @dataclasses.dataclass
 class CodeCommitEventHandler:
+    """
+    :param s3_console_url: where the original event is stored.
+    """
+
     bsm: BotoSesManager = dataclasses.field()
     cc_event: CodeCommitEvent = dataclasses.field()
+    s3_console_url: str = dataclasses.field()
 
     def log_cc_event(self):
         logger.header("Handle CodeCommit event", "-", 60)
         logger.info(f"- detected event type = {self.cc_event.event_type!r}")
         logger.info(f"- event description = {self.cc_event.event_description!r}")
 
-    def do_we_trigger_build(self) -> bool:
+    def check_what_to_do(self) -> CodeCommitHandlerActionEnum:
         """
+        Analyze the CodeBuild event, check what to do.
+
         This function defines whether we should trigger an AWS CodeBuild build job.
         This solution designed for any type of project for any programming language
         and for any Git Workflow. This function allow you to customize your own
@@ -119,7 +139,7 @@ class CodeCommitEventHandler:
                 f"we don't trigger build job for "
                 f"event type {self.cc_event.event_type!r} on {self.cc_event.source_branch}"
             )
-            return False
+            return CodeCommitHandlerActionEnum.nothing
         # run build job if it is a Pull Request related event
         elif self.cc_event.is_pr_created_event or self.cc_event.is_pr_update_event:
             # we don't trigger if commit message has 'NO BUILD'
@@ -131,7 +151,7 @@ class CodeCommitEventHandler:
                     f"we DO NOT trigger build job for "
                     f"commit message {SemanticCommitEnum.chore.value!r}"
                 )
-                return False
+                return CodeCommitHandlerActionEnum.nothing
 
             # we don't trigger if source branch is not valid branch
             if not (
@@ -146,7 +166,7 @@ class CodeCommitEventHandler:
                     "we DO NOT trigger build job "
                     f"if PR source branch is {self.cc_event.target_branch!r}"
                 )
-                return False
+                return CodeCommitHandlerActionEnum.nothing
 
             # we don't trigger if target branch is not main
             if not self.cc_event.target_is_main_branch:
@@ -155,11 +175,11 @@ class CodeCommitEventHandler:
                     "if PR target branch is not 'main' "
                     f"it is {self.cc_event.target_branch!r}"
                 )
-                return False
-            return True
+                return CodeCommitHandlerActionEnum.nothing
+            return CodeCommitHandlerActionEnum.start_build
         # always trigger on PR merge event
         elif self.cc_event.is_pr_merged_event:
-            return True
+            return CodeCommitHandlerActionEnum.start_build
         # we don't trigger on other event
         elif (
             self.cc_event.is_create_branch_event
@@ -167,9 +187,9 @@ class CodeCommitEventHandler:
             or self.cc_event.is_comment_event
             or self.cc_event.is_approve_pr_event
         ):
-            return False
+            return CodeCommitHandlerActionEnum.nothing
         else:
-            return False
+            return CodeCommitHandlerActionEnum.nothing
 
     def get_codebuild_config(self) -> CodebuildConfig:
         """
@@ -182,6 +202,7 @@ class CodeCommitEventHandler:
             bsm=self.bsm,
             repo_name=self.cc_event.repo_name,
             file_path=file_path,
+            commit_id=self.cc_event.source_commit,
         )
         return CodebuildConfig.from_dict(json.loads(file.get_text()))
 
@@ -224,16 +245,46 @@ class CodeCommitEventHandler:
         build_job_config: BuildJobConfig,
         additional_env_var: dict,
     ) -> BuildJobRun:
-        cb_client = self.bsm.get_client(AwsServiceEnum.CodeBuild)
+        """
+        Based on build job config from the ``codebuild-config.json`` file,
+        run the CodeBuild job.
+
+        :param build_job_config:
+        :param additional_env_var:
+        :return:
+        """
+        # prepare argument
         kwargs = dict(
-            cb_client=cb_client,
+            bsm=self.bsm,
             projectName=build_job_config.project_name,
         )
         if build_job_config.buildspec:
             kwargs["buildspecOverride"] = build_job_config.buildspec
         kwargs["sourceVersion"] = self.cc_event.source_commit
+
+        # use the env var defined in ``codebuild-config.json`` file
         env_var = build_job_config.env_var.copy()
+
+        # merge additional env var
         env_var.update(additional_env_var)
+
+        # add additional env var based on the build type
+        if build_job_config.is_batch_job:
+            logger.info(
+                f"invoke codebuild.start_build_batch API, "
+                f"source version = {self.cc_event.source_commit!r}"
+            )
+            function = start_build_batch
+            env_var[f"{CI_DATA_PREFIX}BUILD_TYPE"] = "batch build"
+        else:
+            logger.info(
+                f"invoke codebuild.start_build API, "
+                f"source version = {self.cc_event.source_commit!r}"
+            )
+            function = start_build
+            env_var[f"{CI_DATA_PREFIX}BUILD_TYPE"] = "single build"
+
+        # set env var in kwargs
         kwargs["environmentVariablesOverride"] = [
             {
                 "name": key,
@@ -242,112 +293,146 @@ class CodeCommitEventHandler:
             }
             for key, value in env_var.items()
         ]
-        if build_job_config.is_batch_job:
-            logger.info("invoke codebuild.start_build_batch API")
-            res = start_build_batch(**kwargs)
-        else:
-            logger.info("invoke codebuild.start_build API")
-            res = start_build(**kwargs)
+
+        # run build job
+        res = function(**kwargs)
+
+        # parse API response
         build_job_run = BuildJobRun.from_start_build_response(res)
         return build_job_run
 
-    def run_build_job_for_pr_event(
+    def run_build_job_and_post_comment(
         self,
         build_job_config: BuildJobConfig,
     ):
-        # post an initial comment to the PR
-        comment = cc_boto.post_comment_for_pull_request(
-            bsm=self.bsm,
-            pr_id=self.cc_event.pr_id,
-            repo_name=self.cc_event.repo_name,
-            before_commit_id=self.cc_event.source_commit,
-            after_commit_id=self.cc_event.target_commit,
-            content=self.comment_body_before_run_build_job,
-        )
-        ci_data = CIData(
-            commit_message=self.cc_event.commit_message,
-            comment_id=comment.comment_id,
-        )
+        with cc_boto.CommentThread(bsm=self.bsm) as thread:
+            comment = thread.post_comment(
+                repo_name=self.cc_event.repo_name,
+                before_commit_id=self.cc_event.source_commit,
+                after_commit_id=self.cc_event.target_commit,
+                content=self.comment_body_before_run_build_job,
+            )
 
-        # start build
-        build_job_run = self.run_build_job(
-            build_job_config=build_job_config,
-            additional_env_var=ci_data.to_env_var(),
-        )
+            ci_data = CIData(
+                event_s3_console_url=self.s3_console_url,
+                commit_message=self.cc_event.commit_message,
+                comment_id=comment.comment_id,
+            )
 
-        # update the first comment with build job run console url
-        cc_boto.update_comment(
-            bsm=self.bsm,
-            comment_id=comment.comment_id,
-            content=self.get_comment_body_after_run_build_job(build_job_run),
-        )
+            # start build
+            build_job_run = self.run_build_job(
+                build_job_config=build_job_config,
+                additional_env_var=ci_data.to_env_var(),
+            )
 
-    def run_build_job_for_non_pr_event(
-        self,
-        build_job_config: BuildJobConfig,
-    ):
-        self.run_build_job(
-            build_job_config=build_job_config,
-            additional_env_var={},
-        )
+            # update the first comment with build job run console url
+            cc_boto.update_comment(
+                bsm=self.bsm,
+                comment_id=comment.comment_id,
+                content=self.get_comment_body_after_run_build_job(build_job_run),
+            )
+
+    def action_start_build(self):
+        logger.header("Trigger build jobs", "-", 60)
+        cb_config = self.get_codebuild_config()
+        for job in cb_config.jobs:
+            self.run_build_job_and_post_comment(job)
 
     def execute(self):
         self.log_cc_event()
 
-        if self.do_we_trigger_build() is False:
+        action = self.check_what_to_do()
+        if action == CodeCommitHandlerActionEnum.nothing:
             return
+        elif action == CodeCommitHandlerActionEnum.start_build:
+            self.action_start_build()
 
-        logger.header("Trigger build jobs", "-", 60)
-        cb_config = self.get_codebuild_config()
 
-        for job in cb_config.jobs:
-            if self.cc_event.is_pr_event:
-                self.run_build_job_for_pr_event(job)
-            else:
-                self.run_build_job_for_non_pr_event(job)
+class CodeBuildHandlerActionEnum(str, enum.Enum):
+    nothing = "nothing"
+    post_status_to_comment = "post_status_to_pr_comment"
 
 
 @dataclasses.dataclass
 class CodeBuildEventHandler:
     bsm: BotoSesManager = dataclasses.field()
     cb_event: CodeBuildEvent = dataclasses.field()
+    s3_console_url: str = dataclasses.field()
+    build_job_run: BuildJobRun = dataclasses.field()
 
     def log_cb_event(self):
         logger.header("Handle CodeBuild event", "-", 60)
+        logger.info(f"- is it a BATCH build = {self.build_job_run.is_batch}")
         logger.info(f"- detected event type = {self.cb_event.event_type!r}")
-        logger.info(f"- build job run url = {self.cb_event.buildRunConsoleUrl}")
+        logger.info(f"- build job run url = {self.cb_event.console_url}")
 
-    def do_we_ignore_this(self) -> bool:
-        return not (
-            self.cb_event.is_state_in_progress
-            or self.cb_event.is_state_failed
-            or self.cb_event.is_state_succeeded
-        )
+    def check_what_to_do(self) -> CodeBuildHandlerActionEnum:
+        """
+        Analyze the CodeBuild event, check what to do.
+        """
+        logger.header("Check what to do", "-", 60)
+        logger.info("  do nothing for State Change IN_PROGRESS")
+        # Ignore when it is state change event, but IN PROGRESS
+        # we only care the failed, succeeded, stopped
+        if (
+            self.cb_event.is_state_change_event()
+            and self.cb_event.is_build_status_IN_PROGRESS()
+        ):
+            logger.info("  do nothing for State Change IN_PROGRESS")
+            return CodeBuildHandlerActionEnum.nothing
+        # Ignore all phase change event
+        elif self.cb_event.is_phase_change_event():
+            logger.info("  do nothing for Phase Change")
+            return CodeBuildHandlerActionEnum.nothing
+        else:
+            logger.info("  post status to Comment")
+            return CodeBuildHandlerActionEnum.post_status_to_comment
 
-    def get_build_job_run_details(self) -> dict:
-        cb_client = self.bsm.get_client(AwsServiceEnum.CodeBuild)
-        return cb_client.batch_get_builds(
-            ids=[
-                self.cb_event.buildUUID,
-            ]
-        )
+    def get_build_job_run_details(self) -> dict:  # pragma: no cover
+        """
+        Call ``batch_get_builds`` or ``batch_get_build_batches`` API to get
+        build job run details. Primarily it is to get the environment variable.
 
-    def post_build_status_to_pr_comment(self, build_job_run_details: dict):
-        env_var = {
-            dct["name"]: dct["value"]
-            for dct in build_job_run_details["builds"][0]["environment"][
-                "environmentVariables"
-            ]
-        }
-        ci_data = CIData.from_env_var(env_var)
+        Reference:
+
+        - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/codebuild.html#CodeBuild.Client.batch_get_builds
+        - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/codebuild.html#CodeBuild.Client.batch_get_build_batches
+
+        NOTE:
+
+            this function is not used ...
+        """
+        if self.build_job_run.is_batch:
+            return self.bsm.codebuild_client.batch_get_build_batches(
+                ids=[
+                    self.cb_event.build_arn,
+                ]
+            )
+        else:
+            return self.bsm.codebuild_client.batch_get_builds(
+                ids=[
+                    self.cb_event.build_arn,
+                ]
+            )
+
+    def post_build_status_to_comment(self):
+        # env_var = {
+        #     dct["name"]: dct["value"]
+        #     for dct in build_job_run_details["builds"][0]["environment"][
+        #         "environmentVariables"
+        #     ]
+        # }
+        # ci_data = CIData.from_env_var(env_var)
+
+        ci_data = CIData.from_env_var(self.cb_event.plain_text_env_var)
         if ci_data.comment_id:
-            if self.cb_event.build_status == "SUCCEEDED":
+            if self.cb_event.is_build_status_SUCCEEDED():
                 comment = "🟢 Build Run SUCCEEDED"
-            elif self.cb_event.build_status == "FAILED":
+            elif self.cb_event.is_build_status_FAILED():
                 comment = "🔴 Build Run FAILED"
-            elif self.cb_event.build_status == "STOPPED":
+            elif self.cb_event.is_build_status_STOPPED():
                 comment = "⚫ Build Run STOPPED"
-            else:
+            else:  # pragma: no cover
                 raise NotImplementedError
             cc_boto.post_comment_reply(
                 bsm=self.bsm,
@@ -355,12 +440,15 @@ class CodeBuildEventHandler:
                 content=comment,
             )
 
+    def action_post_status_to_comment(self):
+        logger.header("Post job run status", "-", 60)
+        # build_job_run_details = self.get_build_job_run_details()
+        self.post_build_status_to_comment()
+
     def execute(self):
         self.log_cb_event()
-
-        if self.do_we_ignore_this():
+        action = self.check_what_to_do()
+        if action == CodeBuildHandlerActionEnum.nothing:
             return
-
-        logger.header("Post job run status", "-", 60)
-        build_job_run_details = self.get_build_job_run_details()
-        self.post_build_status_to_pr_comment(build_job_run_details)
+        elif action == CodeBuildHandlerActionEnum.post_status_to_comment:
+            self.action_post_status_to_comment()

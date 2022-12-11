@@ -29,6 +29,11 @@ def lambda_handler(event: dict, context: dict):
     logger.header("Parse SNS message", "-", 60)
     message_dict = extract_sns_message_dict(event)
 
+    try:
+        event["Records"][0]["Sns"]["Message"] = message_dict
+    except:
+        pass
+
     if message_dict["source"] == "aws.codecommit":
         ci_event = CodeCommitEvent.from_event(message_dict)
         ci_event.bsm = bsm

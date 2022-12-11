@@ -176,9 +176,18 @@ class CodeCommitEventHandler:
                     f"it is {self.cc_event.target_branch!r}"
                 )
                 return CodeCommitHandlerActionEnum.nothing
+
+            logger.info(
+                f"we don't trigger build job for "
+                f"event type {self.cc_event.event_type!r} on {self.cc_event.source_branch}"
+            )
             return CodeCommitHandlerActionEnum.start_build
         # always trigger on PR merge event
         elif self.cc_event.is_pr_merged_event:
+            logger.info(
+                f"trigger build job for PR merged event, from branch "
+                f"{self.cc_event.source_branch!r} to {self.cc_event.target_branch!r}"
+            )
             return CodeCommitHandlerActionEnum.start_build
         # we don't trigger on other event
         elif (
@@ -187,8 +196,16 @@ class CodeCommitEventHandler:
             or self.cc_event.is_comment_event
             or self.cc_event.is_approve_pr_event
         ):
+            logger.info(
+                f"we don't trigger build job for "
+                f"event type {self.cc_event.event_type!r}."
+            )
             return CodeCommitHandlerActionEnum.nothing
         else:
+            logger.info(
+                f"we don't trigger build job for "
+                f"event type {self.cc_event.event_type!r}."
+            )
             return CodeCommitHandlerActionEnum.nothing
 
     def get_codebuild_config(self) -> CodebuildConfig:
@@ -306,12 +323,18 @@ class CodeCommitEventHandler:
         build_job_config: BuildJobConfig,
     ):
         with cc_boto.CommentThread(bsm=self.bsm) as thread:
-            comment = thread.post_comment(
+            kwargs = dict(
                 repo_name=self.cc_event.repo_name,
-                before_commit_id=self.cc_event.source_commit,
-                after_commit_id=self.cc_event.target_commit,
                 content=self.comment_body_before_run_build_job,
+                before_commit_id= self.cc_event.target_commit,
+                after_commit_id= self.cc_event.source_commit,
             )
+            if self.cc_event.pr_id:
+                kwargs["pr_id"] = self.cc_event.pr_id
+                logger.info(f"post comment on PR {self.cc_event.pr_id}")
+            else:
+                logger.info(f"post comment on Commit {self.cc_event.source_commit}")
+            comment = thread.post_comment(**kwargs)
 
             ci_data = CIData(
                 event_s3_console_url=self.s3_console_url,
@@ -434,6 +457,7 @@ class CodeBuildEventHandler:
                 comment = "⚫ Build Run STOPPED"
             else:  # pragma: no cover
                 raise NotImplementedError
+            logger.info(f"  post status {self.cb_event.build_status!r} to comment {ci_data.comment_id!r}")
             cc_boto.post_comment_reply(
                 bsm=self.bsm,
                 in_reply_to=ci_data.comment_id,

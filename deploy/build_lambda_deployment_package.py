@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+"""
+An automation script that build the deployment package for Lambda Function.
+
+This script requires Python3.7 + and no other dependencies.
+"""
+
 import os
 import glob
 import shutil
@@ -26,7 +32,10 @@ else:
     dir_build_lambda.mkdir(parents=True)
 
 
-def get_aws_ci_bot_version():
+def get_aws_ci_bot_version() -> str:
+    """
+    Read the semantic version number from the ``_version.py`` file.
+    """
     path_version_file = dir_project_root / "aws_ci_bot" / "_version.py"
     args = ["python", f"{path_version_file}"]
     res = subprocess.run(args, capture_output=True)

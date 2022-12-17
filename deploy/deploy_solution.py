@@ -593,7 +593,7 @@ if __name__ == "__main__":
     path_requirements_txt = dir_project_root / "requirements.txt"
     dir_python_lib = dir_project_root / "aws_ci_bot"
 
-    bsm = BotoSesManager(profile_name="aws_data_lab_open_source_us_east_1")
+    bsm = BotoSesManager()
     context.attach_boto_session(bsm.boto_ses)
 
     project_md5 = get_project_md5(path_requirements_txt, dir_python_lib)

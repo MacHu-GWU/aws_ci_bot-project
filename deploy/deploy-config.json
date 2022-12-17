@@ -1,3 +1,5 @@
+// the deployment config file when you use infrastructure as code to deploy
+// the ``aws_ci_bot`` solution
 // NOTE: this JSON file allow comments, you don't have to remove comment before deployment
 {
     // the common name prefix for AWS resources

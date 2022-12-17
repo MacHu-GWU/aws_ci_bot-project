@@ -8,7 +8,7 @@
                 "Service": "codestar-notifications.amazonaws.com"
             },
             "Action": "SNS:Publish",
-            "Resource": "arn:aws:sns:us-east-2:669508176277:aws_ci_bot-test"
+            "Resource": "arn:aws:sns:${aws_region}:${aws_account_id}:${sns_topic_name}"
         }
     ]
 }

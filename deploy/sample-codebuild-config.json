@@ -1,0 +1,10 @@
+{
+    "jobs": [
+        {
+            "project_name": "aws_ci_bot_test-project",
+            "is_batch_job": false,
+            "buildspec": "",
+            "env_var": {}
+        }
+    ]
+}

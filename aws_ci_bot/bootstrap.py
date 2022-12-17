@@ -2,7 +2,9 @@
 
 """
 Allow user to quickly set up CodeCommit repo and CodeBuild project to use
-along with aws_ci_bot solution
+along with aws_ci_bot solution. Now this module is not necessary, we can use
+CloudFormation to create them efficiently. But, I want to keep it here as a
+reference.
 """
 
 import typing as T

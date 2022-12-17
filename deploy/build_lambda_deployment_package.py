@@ -70,6 +70,7 @@ def install_aws_ci_bot():
 
 
 def zip_deployment_package():
+    cwd = os.getcwd()
     os.chdir(dir_build_deployment_package)
 
     args = [
@@ -80,6 +81,8 @@ def zip_deployment_package():
         "-q",
     ] + glob.glob("*")
     subprocess.run(args, check=True)
+
+    os.chdir(cwd)
 
 
 if __name__ == "__main__":

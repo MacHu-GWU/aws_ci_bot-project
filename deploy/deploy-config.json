@@ -1,0 +1,9 @@
+{
+    "project_name": "aws_ci_bot",
+    "s3_bucket": "501105007192-us-east-1-artifacts",
+    "s3_prefix": "projects/aws-ci-bot/",
+    "codecommit_repo_list": [
+    ],
+    "codebuild_project_list": [
+    ]
+}

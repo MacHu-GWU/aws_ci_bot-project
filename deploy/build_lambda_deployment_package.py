@@ -82,6 +82,7 @@ def zip_deployment_package():
     subprocess.run(args, check=True)
 
 
-install_aws_ci_bot_dependencies()
-install_aws_ci_bot()
-zip_deployment_package()
+if __name__ == "__main__":
+    install_aws_ci_bot_dependencies()
+    install_aws_ci_bot()
+    zip_deployment_package()

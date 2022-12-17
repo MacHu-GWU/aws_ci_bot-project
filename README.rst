@@ -183,3 +183,9 @@ You can easily define your own rules to customize this behavior by chaging this 
     - committer name: "alice"
 
     🟢 Build Run SUCCEEDED
+
+
+4. How to Customize
+------------------------------------------------------------------------------
+- go `codecommit_rule.py <./aws_ci_bot/codecommit_rule.py>`_ to customize when, on what git event, on what branch, on what commit message, you want to run what build.
+- go `codebuild_rule.py <./aws_ci_bot/codebuild_rule.py>`_ to customize when do you want to post comment to CodeCommit repo.

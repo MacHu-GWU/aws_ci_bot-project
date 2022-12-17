@@ -30,9 +30,8 @@ def get_md5(path: Path) -> str:
 
 @attr.s
 class Stack(cf.Stack):
-    """
+    """ """
 
-    """
     project_name: str = attr.ib(default=None)
     s3_bucket: str = attr.ib(default=None)
     s3_prefix: str = attr.ib(default=None)
@@ -244,6 +243,27 @@ class Stack(cf.Stack):
         )
         self.rg_3_lambda.add(self.lbd_func)
 
+        self.sns_subscription = sns.Subscription(
+            "SNSSubscriptionForLambda",
+            rp_Protocol="lambda",
+            rp_TopicArn=self.sns_topic.rv_TopicArn,
+            p_Endpoint=self.lbd_func.rv_Arn,
+            ra_DependsOn=[
+                self.sns_topic,
+                self.lbd_func,
+            ],
+        )
+        self.rg_3_lambda.add(self.sns_subscription)
+
+        self.lambda_permission_for_sns_topic = (
+            cf.helpers.awslambda.create_permission_for_sns(
+                logic_id="LambdaPermissionForSNSTopic",
+                func=self.lbd_func,
+                topic=self.sns_topic,
+            )
+        )
+        self.rg_3_lambda.add(self.lambda_permission_for_sns_topic)
+
     def post_hook(self):
         self.make_rg_1_iam()
         self.make_rg_2_sns()
@@ -277,7 +297,7 @@ if __name__ == "__main__":
         deploy_config["s3_prefix"],
         "lambda",
         path_lambda_deployment_package.stem,
-        f"{get_md5(path_lambda_deployment_package)}.zip"
+        f"{get_md5(path_lambda_deployment_package)}.zip",
     )
 
     s3path_deployment_package.upload_file(

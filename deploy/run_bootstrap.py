@@ -5,6 +5,7 @@ from aws_ci_bot.bootstrap import (
     create_codecommit_repos,
     create_codebuild_projects,
     create_notifications,
+    delete_notification_rules,
 )
 
 bsm = BotoSesManager(profile_name="aws_data_lab_open_source_us_east_1")
@@ -18,3 +19,4 @@ sns_topic_arn = "arn:aws:sns:us-east-1:501105007192:aws-ci-bot"
 create_codecommit_repos(bsm, repos)
 create_codebuild_projects(bsm, repos, codebuild_iam_role)
 create_notifications(bsm, repos, sns_topic_arn)
+# delete_notification_rules(bsm, repos)

@@ -6,6 +6,7 @@ along with aws_ci_bot solution
 """
 
 import typing as T
+import dataclasses
 from boto_session_manager import BotoSesManager
 
 
@@ -95,7 +96,11 @@ def create_notifications(
     repos: T.List[str],
     sns_topic_arn: str,
 ):
+    """
+    Ref:
 
+    - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/codestar-notifications.html#CodeStarNotifications.Client.create_notification_rule
+    """
     for repo in repos:
         project = repo
         try:
@@ -103,7 +108,7 @@ def create_notifications(
             print(f"Create Notification event {name}")
             bsm.codestar_notifications_client.create_notification_rule(
                 Name=name,
-                Resource=f"arn:aws:codecommit:{bsm.aws_region}:{bsm.aws_account_id}:repo",
+                Resource=f"arn:aws:codecommit:{bsm.aws_region}:{bsm.aws_account_id}:{repo}",
                 Targets=[
                     dict(
                         TargetType="SNS",
@@ -158,3 +163,68 @@ def create_notifications(
                 print("  already exists, skip")
             else:
                 raise e
+
+
+@dataclasses.dataclass
+class NotificationRule:
+    id: T.Optional[str] = dataclasses.field(default=None)
+    arn: T.Optional[str] = dataclasses.field(default=None)
+    name: T.Optional[str] = dataclasses.field(default=None)
+    resource: T.Optional[str] = dataclasses.field(default=None)
+    status: T.Optional[str] = dataclasses.field(default=None)
+
+    def get_detail(self, bsm: BotoSesManager) -> "NotificationRule":
+        """
+        Ref:
+
+        - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/codestar-notifications.html#CodeStarNotifications.Client.describe_notification_rule
+        """
+        res = bsm.codestar_notifications_client.describe_notification_rule(Arn=self.arn)
+        self.name = res["Name"]
+        self.resource = res["Resource"]
+        self.status = res["Status"]
+        return self
+
+
+def list_notification_rules(
+    bsm: BotoSesManager,
+) -> T.List[NotificationRule]:
+    """
+    Ref:
+
+    - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/codestar-notifications.html#CodeStarNotifications.Paginator.ListNotificationRules
+    """
+    paginator = bsm.codestar_notifications_client.get_paginator(
+        "list_notification_rules"
+    )
+    rules = list()
+    for res in paginator.paginate():
+        for dct in res["NotificationRules"]:
+            rule = NotificationRule(id=dct["Id"], arn=dct["Arn"])
+            rules.append(rule)
+    return rules
+
+
+def delete_notification_rules(
+    bsm: BotoSesManager,
+    repos: T.List[str],
+):
+    """
+    Ref:
+
+    - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/codestar-notifications.html#CodeStarNotifications.Client.list_notification_rules
+    - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/codestar-notifications.html#CodeStarNotifications.Client.describe_notification_rule
+    """
+    names = set()
+    for repo in repos:
+        project = repo
+        names.add(f"{repo}-codecommit-all-event")
+        names.add(f"{project}-codebuild-all-event")
+
+    print(f"Delete notification rules ...")
+    for rule in list_notification_rules(bsm):
+        rule.get_detail(bsm)
+        if rule.name in names:
+            print(f"  delete {rule.name}")
+            bsm.codestar_notifications_client.delete_notification_rule(Arn=rule.arn)
+    print("  done")

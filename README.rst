@@ -80,7 +80,7 @@ Below is a sample workflow for Pull Request and Code Review.
 7. The CI-Bot post a reply to the PR comment to tell the developer the build job progress.
 
 
-2. How to Deploy
+2. How to Deploy, the manual Way
 ------------------------------------------------------------------------------
 .. contents::
     :class: this-will-duplicate-information-and-it-is-still-useful-here
@@ -262,7 +262,13 @@ This deployment assume that you have one git repo to work on. But if you have mu
 - single Lambda Function (and it's role)
 
 
-3. Test This Solution
+3. How to Deploy, the Automatic Way
+------------------------------------------------------------------------------
+1. Go to `deploy-config.json <./deploy/deploy-config.json>`_,
+
+
+
+4. Test This Solution
 ------------------------------------------------------------------------------
 .. contents::
     :class: this-will-duplicate-information-and-it-is-still-useful-here

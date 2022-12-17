@@ -179,6 +179,12 @@ class Stack(cf.Stack):
         )
         self.rg_2_sns.add(self.sns_topic)
 
+        self.output_sns_topic_arn = cf.Output(
+            "SNSTopicArn",
+            Value=self.sns_topic.rv_TopicArn,
+        )
+        self.rg_2_sns.add(self.output_sns_topic_arn)
+
         self.sns_topic_policy = sns.TopicPolicy(
             "SNSTopicPolicy",
             rp_PolicyDocument={

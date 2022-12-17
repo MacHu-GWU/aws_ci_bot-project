@@ -109,7 +109,7 @@ In average, it usually takes 5 minutes to deploy using the Infrastructure as Cod
                     "project_name": "${codebuild_project_name}",
                     "is_batch_job": false,
                     "buildspec": "",
-                    "env_var": {},
+                    "env_var": {}
                 }
             ]
         }

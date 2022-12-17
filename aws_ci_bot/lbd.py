@@ -3,20 +3,17 @@
 import os
 
 from aws_codecommit import CodeCommitEvent
-from aws_codebuild import CodeBuildEvent
+from aws_codebuild import CodeBuildEvent, BuildJobRun
 from boto_session_manager import BotoSesManager, AwsServiceEnum
 
+from . import logger
 from .console import get_s3_console_url
 from .sns_event import (
     extract_sns_message_dict,
     upload_ci_event,
 )
-from .codecommit_and_codebuild import (
-    CodeCommitEventHandler,
-    CodeBuildEventHandler,
-    BuildJobRun,
-)
-from . import logger
+from .codecommit import CodeCommitEventHandler
+from .codebuild import CodeBuildEventHandler
 
 S3_BUCKET = os.environ["S3_BUCKET"]
 S3_PREFIX = os.environ["S3_PREFIX"]
@@ -29,11 +26,6 @@ def lambda_handler(event: dict, context: dict):
 
     logger.header("Parse SNS message", "-", 60)
     message_dict = extract_sns_message_dict(event)
-
-    try:
-        event["Records"][0]["Sns"]["Message"] = message_dict
-    except:
-        pass
 
     if message_dict["source"] == "aws.codecommit":
         ci_event = CodeCommitEvent.from_event(message_dict)

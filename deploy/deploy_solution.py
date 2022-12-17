@@ -646,4 +646,6 @@ if __name__ == "__main__":
         template=tpl,
         include_named_iam=True,
         skip_prompt=True,
+        timeout=120,
+        change_set_timeout=60,
     )

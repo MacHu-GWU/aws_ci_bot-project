@@ -49,7 +49,7 @@
 
 Welcome to ``aws_ci_bot`` Documentation
 ==============================================================================
-``aws_ci_bot`` is a open source solution that allow you to create an CI/CD platform that is similar to "Jenkins", "GitHub Action", "CircleCI", "GitLab CI" in 30 minutes, in an empty "AWS Account" using AWS CodeCommit as the git repository, AWS CodeBuild as the CI build runtime, and the AWS Lambda Function as the CI-Bot.
+🤖 ``aws_ci_bot`` is a open source solution that allow you to create an CI/CD platform that is similar to "Jenkins", "GitHub Action", "CircleCI", "GitLab CI" in 30 minutes, in an empty "AWS Account" using AWS CodeCommit as the git repository, AWS CodeBuild as the CI build runtime, and the AWS Lambda Function as the CI-Bot.
 
 It comes with a lot more advanced features that is highly customizable:
 

@@ -145,18 +145,18 @@ class CodeCommitEventHandler:
         build_job_config: BuildJobConfig,
     ):
         with cc_boto.CommentThread(bsm=self.bsm) as thread:
-            kwargs = dict(
+            post_comment_kwargs = dict(
                 repo_name=self.cc_event.repo_name,
                 content=self.comment_body_before_run_build_job,
                 before_commit_id=self.cc_event.target_commit,
                 after_commit_id=self.cc_event.source_commit,
             )
             if self.cc_event.pr_id:
-                kwargs["pr_id"] = self.cc_event.pr_id
+                post_comment_kwargs["pr_id"] = self.cc_event.pr_id
                 logger.info(f"post comment on PR {self.cc_event.pr_id}")
             else:
                 logger.info(f"post comment on Commit {self.cc_event.source_commit}")
-            comment = thread.post_comment(**kwargs)
+            comment = thread.post_comment(**post_comment_kwargs)
 
             ci_data = CIData(
                 event_s3_console_url=self.s3_console_url,
@@ -167,6 +167,7 @@ class CodeCommitEventHandler:
                 commit_message=self.cc_event.commit_message,
                 committer_name=self.cc_event.committer_name,
                 branch_name=self.cc_event.source_branch,
+                pr_id=self.cc_event.pr_id,
                 pr_from_branch=self.cc_event.source_branch,
                 pr_to_branch=self.cc_event.target_branch,
                 pr_from_commit_id=self.cc_event.source_commit,

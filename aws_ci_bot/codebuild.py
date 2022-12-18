@@ -24,12 +24,14 @@ class CodeBuildEventHandler:
     :param bsm: where the original event is stored.
     :param cb_event: the CodeBuild event object.
     :param s3_console_url: where the original event is stored.
+    :param s3_uri: where the original event is stored.
     :param build_job_run: the CodeBuild job run object.
     """
 
     bsm: BotoSesManager = dataclasses.field()
     cb_event: CodeBuildEvent = dataclasses.field()
     s3_console_url: str = dataclasses.field()
+    s3_uri: str = dataclasses.field()
     build_job_run: BuildJobRun = dataclasses.field()
 
     def log_cb_event(self):

@@ -31,6 +31,7 @@ class CIData:
     commit_message: T.Optional[str] = dataclasses.field(default=None)
     committer_name: T.Optional[str] = dataclasses.field(default=None)
     branch_name: T.Optional[str] = dataclasses.field(default=None)
+    pr_id: T.Optional[str] = dataclasses.field(default=None)
     pr_from_branch: T.Optional[str] = dataclasses.field(default=None)
     pr_to_branch: T.Optional[str] = dataclasses.field(default=None)
     pr_from_commit_id: T.Optional[str] = dataclasses.field(default=None)

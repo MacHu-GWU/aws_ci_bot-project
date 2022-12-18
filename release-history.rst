@@ -15,6 +15,21 @@ Backlog
 **Miscellaneous**
 
 
+0.3.1 (2022-12-18)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Features and Improvements**
+
+- Add a lot environment variable to show git event details for CI build environment to use.
+
+**Default CodeCommit git event handler**
+
+- No change
+
+**Default CodeBuild event handler**
+
+- No change
+
+
 0.2.1 (2022-12-17)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **Features and Improvements**

@@ -30,11 +30,13 @@ class CodeCommitEventHandler:
     :param bsm: where the original event is stored.
     :param cc_event: the CodeCommit event object.
     :param s3_console_url: where the original event is stored.
+    :param s3_uri: where the original event is stored.
     """
 
     bsm: BotoSesManager = dataclasses.field()
     cc_event: CodeCommitEvent = dataclasses.field()
     s3_console_url: str = dataclasses.field()
+    s3_uri: str = dataclasses.field()
 
     def log_cc_event(self):
         logger.header("Handle CodeCommit event", "-", 60)
@@ -158,8 +160,17 @@ class CodeCommitEventHandler:
 
             ci_data = CIData(
                 event_s3_console_url=self.s3_console_url,
-                commit_message=self.cc_event.commit_message,
+                event_s3_uri=self.s3_uri,
+                event_type=self.cc_event.event_type,
                 comment_id=comment.comment_id,
+                commit_id=self.cc_event.source_commit,
+                commit_message=self.cc_event.commit_message,
+                committer_name=self.cc_event.committer_name,
+                branch_name=self.cc_event.source_branch,
+                pr_from_branch=self.cc_event.source_branch,
+                pr_to_branch=self.cc_event.target_branch,
+                pr_from_commit_id=self.cc_event.source_commit,
+                pr_to_commit_id=self.cc_event.target_commit,
             )
 
             # start build

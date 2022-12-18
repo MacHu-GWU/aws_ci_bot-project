@@ -19,11 +19,22 @@ class CIData:
         CodeCommit event. it will send to the Environment Variable for CodeBuild
         job run, and all of sub-sequence CodeBuild event will reply
         to this comment.
-    """
 
-    event_s3_console_url: str = dataclasses.field(default=None)
-    commit_message: T.Optional[str] = dataclasses.field(default=None)
+    All attributes have a default value None, because if it is None,
+    it won't be used in environment variable
+    """
+    event_s3_console_url: T.Optional[str] = dataclasses.field(default=None)
+    event_s3_uri: T.Optional[str] = dataclasses.field(default=None)
+    event_type: T.Optional[str] = dataclasses.field(default=None)
     comment_id: T.Optional[str] = dataclasses.field(default=None)
+    commit_id: T.Optional[str] = dataclasses.field(default=None)
+    commit_message: T.Optional[str] = dataclasses.field(default=None)
+    committer_name: T.Optional[str] = dataclasses.field(default=None)
+    branch_name: T.Optional[str] = dataclasses.field(default=None)
+    pr_from_branch: T.Optional[str] = dataclasses.field(default=None)
+    pr_to_branch: T.Optional[str] = dataclasses.field(default=None)
+    pr_from_commit_id: T.Optional[str] = dataclasses.field(default=None)
+    pr_to_commit_id: T.Optional[str] = dataclasses.field(default=None)
 
     def to_env_var(
         self,
@@ -31,7 +42,7 @@ class CIData:
     ) -> dict:
         env_var = dict()
         for attr, value in dataclasses.asdict(self).items():
-            if value is not None:
+            if bool(value):
                 key = (prefix + attr).upper()
                 env_var[key] = value
         return env_var

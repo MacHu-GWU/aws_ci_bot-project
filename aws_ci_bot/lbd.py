@@ -49,6 +49,7 @@ def lambda_handler(event: dict, context: dict):
             bsm=bsm,
             cc_event=ci_event,
             s3_console_url=s3_console_url,
+            s3_uri=s3_uri,
         )
         cc_event_handler.execute()
     elif isinstance(ci_event, CodeBuildEvent):
@@ -56,6 +57,7 @@ def lambda_handler(event: dict, context: dict):
             bsm=bsm,
             cb_event=ci_event,
             s3_console_url=s3_console_url,
+            s3_uri=s3_uri,
             build_job_run=BuildJobRun.from_arn(ci_event.build_arn),
         )
         cb_event_handler.execute()

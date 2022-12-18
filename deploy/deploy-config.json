@@ -5,25 +5,93 @@
     // the common name prefix for AWS resources
     "project_name": "aws_ci_bot",
     // where you want to store CI/CD event data as a back up
-    "s3_bucket": "501105007192-us-east-1-artifacts",
+    "s3_bucket": "669508176277-us-east-1-artifacts",
     "s3_prefix": "projects/aws-ci-bot/",
     // the list of codecommit repo you want to create
     "codecommit_repo_list": [
-        "aws_ci_bot_test-project"
+        "aws_idp_admin-project",
+        "aws_idp_doc_store-project",
+        "aws_idp_labeling-project",
+        "aws_idp_doc_classify-project",
+        "aws_idp_data_extract-project"
     ],
     // the list of codebuild project you want to create
     "codebuild_project_list": [
         {
             // the name of the CodeBuild project
-            "project_name": "aws_ci_bot_test-project",
+            "project_name": "aws_idp_admin-project",
             // the CodeCommit repo name that you want to build
-            "repo_name": "aws_ci_bot_test-project",
+            "repo_name": "aws_idp_admin-project",
             // following the following CloudFormation document to customize
             // your codebuild project
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html
             "environment_type": "LINUX_CONTAINER", // "LINUX_CONTAINER" | "ARM_CONTAINER" | "LINUX_GPU_CONTAINER" | "WINDOWS_CONTAINER"
             "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
-            "compute_type": "BUILD_GENERAL1_SMALL", // "BUILD_GENERAL1_SMALL" 2 vCPU 3GB RAM | "BUILD_GENERAL1_MEDIUM" 4 vCPU 7GB RAM | "BUILD_GENERAL1_LARGE" 8 vCPU 15GB RAM
+            "compute_type": "BUILD_GENERAL1_MEDIUM", // "BUILD_GENERAL1_SMALL" 2 vCPU 3GB RAM | "BUILD_GENERAL1_MEDIUM" 4 vCPU 7GB RAM | "BUILD_GENERAL1_LARGE" 8 vCPU 15GB RAM
+            "privileged_mode": true, // if you need to build docker in docker, then set true, otherwise use false
+            "timeout_in_minutes": 15,
+            "queued_timeout_in_minutes": 30,
+            "concurrent_build_limit": 5
+        },
+        {
+            // the name of the CodeBuild project
+            "project_name": "aws_idp_doc_store-project",
+            // the CodeCommit repo name that you want to build
+            "repo_name": "aws_idp_doc_store-project",
+            // following the following CloudFormation document to customize
+            // your codebuild project
+            // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html
+            "environment_type": "LINUX_CONTAINER", // "LINUX_CONTAINER" | "ARM_CONTAINER" | "LINUX_GPU_CONTAINER" | "WINDOWS_CONTAINER"
+            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
+            "compute_type": "BUILD_GENERAL1_MEDIUM", // "BUILD_GENERAL1_SMALL" 2 vCPU 3GB RAM | "BUILD_GENERAL1_MEDIUM" 4 vCPU 7GB RAM | "BUILD_GENERAL1_LARGE" 8 vCPU 15GB RAM
+            "privileged_mode": true, // if you need to build docker in docker, then set true, otherwise use false
+            "timeout_in_minutes": 15,
+            "queued_timeout_in_minutes": 30,
+            "concurrent_build_limit": 5
+        },
+        {
+            // the name of the CodeBuild project
+            "project_name": "aws_idp_labeling-project",
+            // the CodeCommit repo name that you want to build
+            "repo_name": "aws_idp_labeling-project",
+            // following the following CloudFormation document to customize
+            // your codebuild project
+            // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html
+            "environment_type": "LINUX_CONTAINER", // "LINUX_CONTAINER" | "ARM_CONTAINER" | "LINUX_GPU_CONTAINER" | "WINDOWS_CONTAINER"
+            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
+            "compute_type": "BUILD_GENERAL1_MEDIUM", // "BUILD_GENERAL1_SMALL" 2 vCPU 3GB RAM | "BUILD_GENERAL1_MEDIUM" 4 vCPU 7GB RAM | "BUILD_GENERAL1_LARGE" 8 vCPU 15GB RAM
+            "privileged_mode": true, // if you need to build docker in docker, then set true, otherwise use false
+            "timeout_in_minutes": 15,
+            "queued_timeout_in_minutes": 30,
+            "concurrent_build_limit": 5
+        },
+        {
+            // the name of the CodeBuild project
+            "project_name": "aws_idp_doc_classify-project",
+            // the CodeCommit repo name that you want to build
+            "repo_name": "aws_idp_doc_classify-project",
+            // following the following CloudFormation document to customize
+            // your codebuild project
+            // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html
+            "environment_type": "LINUX_CONTAINER", // "LINUX_CONTAINER" | "ARM_CONTAINER" | "LINUX_GPU_CONTAINER" | "WINDOWS_CONTAINER"
+            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
+            "compute_type": "BUILD_GENERAL1_MEDIUM", // "BUILD_GENERAL1_SMALL" 2 vCPU 3GB RAM | "BUILD_GENERAL1_MEDIUM" 4 vCPU 7GB RAM | "BUILD_GENERAL1_LARGE" 8 vCPU 15GB RAM
+            "privileged_mode": true, // if you need to build docker in docker, then set true, otherwise use false
+            "timeout_in_minutes": 15,
+            "queued_timeout_in_minutes": 30,
+            "concurrent_build_limit": 5
+        },
+        {
+            // the name of the CodeBuild project
+            "project_name": "aws_idp_data_extract-project",
+            // the CodeCommit repo name that you want to build
+            "repo_name": "aws_idp_data_extract-project",
+            // following the following CloudFormation document to customize
+            // your codebuild project
+            // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html
+            "environment_type": "LINUX_CONTAINER", // "LINUX_CONTAINER" | "ARM_CONTAINER" | "LINUX_GPU_CONTAINER" | "WINDOWS_CONTAINER"
+            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
+            "compute_type": "BUILD_GENERAL1_MEDIUM", // "BUILD_GENERAL1_SMALL" 2 vCPU 3GB RAM | "BUILD_GENERAL1_MEDIUM" 4 vCPU 7GB RAM | "BUILD_GENERAL1_LARGE" 8 vCPU 15GB RAM
             "privileged_mode": true, // if you need to build docker in docker, then set true, otherwise use false
             "timeout_in_minutes": 15,
             "queued_timeout_in_minutes": 30,

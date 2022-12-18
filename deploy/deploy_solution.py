@@ -593,7 +593,7 @@ if __name__ == "__main__":
     path_requirements_txt = dir_project_root / "requirements.txt"
     dir_python_lib = dir_project_root / "aws_ci_bot"
 
-    bsm = BotoSesManager()
+    bsm = BotoSesManager(profile_name="aws_data_lab_sanhe_us_east_1")
     context.attach_boto_session(bsm.boto_ses)
 
     project_md5 = get_project_md5(path_requirements_txt, dir_python_lib)
@@ -629,9 +629,9 @@ if __name__ == "__main__":
     tpl.add(stack.rg_1_iam)
     tpl.add(stack.rg_2_sns)
     tpl.add(stack.rg_3_lambda)
-    tpl.add(stack.rg_4_codecommit)
-    tpl.add(stack.rg_5_codebuild)
-    tpl.add(stack.rg_6_notification_rules)
+    # tpl.add(stack.rg_4_codecommit)
+    # tpl.add(stack.rg_5_codebuild)
+    # tpl.add(stack.rg_6_notification_rules)
 
     tpl.batch_tagging(
         tags=dict(ProjectName=stack.project_name),

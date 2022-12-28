@@ -55,9 +55,9 @@ def check_what_to_do(cc_event: CodeCommitEvent) -> CodeCommitHandlerActionEnum:
             or cc_event.source_is_develop_branch
             or cc_event.source_is_fix_branch
             or cc_event.source_is_build_branch
-            or is_certain_semantic_branch(cc_event.source_branch, ["lbd", ])  # do Lambda Function stuff
+            or is_certain_semantic_branch(cc_event.source_branch, ["lbd", "lambda"])  # do Lambda Function stuff
             or is_certain_semantic_branch(cc_event.source_branch, ["layer",]) # build Lambda Layer
-            or is_certain_semantic_branch(cc_event.source_branch, ["cf", ]) # deploy CloudFormation stack
+            or is_certain_semantic_branch(cc_event.source_branch, ["cf", "cft", "cloudformation"]) # deploy CloudFormation stack
             or cc_event.source_is_doc_branch
             or cc_event.source_is_release_branch
         ):

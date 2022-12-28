@@ -215,7 +215,20 @@ class Stack(cf.Stack):
                 cf.helpers.iam.ServicePrincipal.codebuild(),
             ).build(),
             p_ManagedPolicyArns=[
+                # cf.helpers.iam.AwsManagedPolicy.AdministratorAccess, # if you are lazy, you can just use this
                 cf.helpers.iam.AwsManagedPolicy.CloudWatchFullAccess,
+                cf.helpers.iam.AwsManagedPolicy.IAMFullAccess,
+                cf.helpers.iam.AwsManagedPolicy.AWSCloudFormationFullAccess,
+                cf.helpers.iam.AwsManagedPolicy.AmazonS3FullAccess,
+                cf.helpers.iam.AwsManagedPolicy.AmazonSSMFullAccess,
+                cf.helpers.iam.AwsManagedPolicy.AmazonEventBridgeFullAccess,
+                cf.helpers.iam.AwsManagedPolicy.AWSLambda_FullAccess,
+                cf.helpers.iam.AwsManagedPolicy.AmazonSNSFullAccess,
+                cf.helpers.iam.AwsManagedPolicy.AmazonTextractFullAccess,
+                cf.helpers.iam.AwsManagedPolicy.ComprehendFullAccess,
+                cf.helpers.iam.AwsManagedPolicy.AmazonSageMakerFullAccess,
+                cf.helpers.iam.AwsManagedPolicy.AmazonAugmentedAIFullAccess,
+                cf.helpers.iam.AwsManagedPolicy.AmazonAPIGatewayAdministrator,
             ],
         )
         self.rg_1_iam.add(self.iam_role_for_codebuild)
@@ -593,7 +606,7 @@ if __name__ == "__main__":
     path_requirements_txt = dir_project_root / "requirements.txt"
     dir_python_lib = dir_project_root / "aws_ci_bot"
 
-    bsm = BotoSesManager(profile_name="aws_data_lab_sanhe_us_east_1")
+    bsm = BotoSesManager(profile_name="aws_data_lab_travelers")
     context.attach_boto_session(bsm.boto_ses)
 
     project_md5 = get_project_md5(path_requirements_txt, dir_python_lib)
@@ -626,12 +639,17 @@ if __name__ == "__main__":
     tpl = cf.Template(
         Description="AWS CI Bot solution stack",
     )
+    # first run
     tpl.add(stack.rg_1_iam)
     tpl.add(stack.rg_2_sns)
     tpl.add(stack.rg_3_lambda)
-    # tpl.add(stack.rg_4_codecommit)
-    # tpl.add(stack.rg_5_codebuild)
-    # tpl.add(stack.rg_6_notification_rules)
+    # second run
+    tpl.add(stack.rg_4_codecommit)
+    tpl.add(stack.rg_5_codebuild)
+    # third run
+    # you have to make sure codecommit repo and codebuild project already deployed
+    # then you can create notification
+    tpl.add(stack.rg_6_notification_rules)
 
     tpl.batch_tagging(
         tags=dict(ProjectName=stack.project_name),
@@ -644,6 +662,7 @@ if __name__ == "__main__":
     env.deploy(
         stack_name=stack.stack_name,
         template=tpl,
+        bucket="931365232219-us-east-1-artifacts",
         include_named_iam=True,
         skip_prompt=True,
         timeout=120,

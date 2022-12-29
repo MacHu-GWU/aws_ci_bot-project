@@ -229,6 +229,7 @@ class Stack(cf.Stack):
                 cf.helpers.iam.AwsManagedPolicy.AmazonSageMakerFullAccess,
                 cf.helpers.iam.AwsManagedPolicy.AmazonAugmentedAIFullAccess,
                 cf.helpers.iam.AwsManagedPolicy.AmazonAPIGatewayAdministrator,
+                cf.helpers.iam.AwsManagedPolicy.AmazonDynamoDBFullAccess,
             ],
         )
         self.rg_1_iam.add(self.iam_role_for_codebuild)

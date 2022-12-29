@@ -217,18 +217,11 @@ class Stack(cf.Stack):
             p_ManagedPolicyArns=[
                 # cf.helpers.iam.AwsManagedPolicy.AdministratorAccess, # if you are lazy, you can just use this
                 cf.helpers.iam.AwsManagedPolicy.CloudWatchFullAccess,
-                cf.helpers.iam.AwsManagedPolicy.IAMFullAccess,
-                cf.helpers.iam.AwsManagedPolicy.AWSCloudFormationFullAccess,
-                cf.helpers.iam.AwsManagedPolicy.AmazonS3FullAccess,
                 cf.helpers.iam.AwsManagedPolicy.AmazonSSMFullAccess,
                 cf.helpers.iam.AwsManagedPolicy.AmazonEventBridgeFullAccess,
                 cf.helpers.iam.AwsManagedPolicy.AWSLambda_FullAccess,
-                cf.helpers.iam.AwsManagedPolicy.AmazonSNSFullAccess,
-                cf.helpers.iam.AwsManagedPolicy.AmazonTextractFullAccess,
-                cf.helpers.iam.AwsManagedPolicy.ComprehendFullAccess,
                 cf.helpers.iam.AwsManagedPolicy.AmazonSageMakerFullAccess,
                 cf.helpers.iam.AwsManagedPolicy.AmazonAugmentedAIFullAccess,
-                cf.helpers.iam.AwsManagedPolicy.AmazonAPIGatewayAdministrator,
                 cf.helpers.iam.AwsManagedPolicy.AmazonDynamoDBFullAccess,
             ],
         )
@@ -256,6 +249,23 @@ class Stack(cf.Stack):
                     ),
                 )
             ]
+
+        full_access_resource = {
+            "Sid": "423d413caf89cad68f201bd92b6af712",
+            "Effect": "Allow",
+            "Action": [
+                "iam:*",
+                "s3:*",
+                "s3-object-lambda:*",
+                "cloudformation:*",
+                "sns:*",
+                "apigateway:*",
+                "textract:*",
+                "comprehend:*",
+                "codebuild:*",
+            ],
+            "Resource": "*"
+        }
 
         policy_document = {
             "Version": "2012-10-17",
@@ -339,7 +349,8 @@ class Stack(cf.Stack):
                         "codecommit:DeleteBranch",
                     ],
                     "Resource": codecommit_resource,
-                }
+                },
+                full_access_resource,
             ],
         }
 

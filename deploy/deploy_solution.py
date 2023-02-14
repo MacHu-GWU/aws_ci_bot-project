@@ -511,7 +511,13 @@ class Stack(cf.Stack):
                 "CodeCommitNotificationRule{}".format(
                     repo_name.replace("_", "").replace("-", "")
                 ),
-                rp_Name=f"{repo_name}-codecommit-all-event",
+                rp_Name=cf.Sub(
+                    string="${repo_name}-${aws_region}-codecommit-all-event",
+                    data=dict(
+                        repo_name=repo_name,
+                        aws_region=cf.AWS_REGION,
+                    )
+                ),
                 rp_Resource=cf.Sub(
                     string="arn:aws:codecommit:${aws_region}:${aws_account_id}:${repo}",
                     data=dict(
@@ -553,7 +559,13 @@ class Stack(cf.Stack):
                 "CodeProjectNotificationRule{}".format(
                     codebuild_project.project_name.replace("_", "").replace("-", "")
                 ),
-                rp_Name=f"{codebuild_project.project_name}-codebuild-all-event",
+                rp_Name=cf.Sub(
+                    string="${project_name}-${aws_region}-codebuild-all-event",
+                    data=dict(
+                        project_name=codebuild_project.project_name,
+                        aws_region=cf.AWS_REGION,
+                    )
+                ),
                 rp_Resource=cf.Sub(
                     string="arn:aws:codebuild:${aws_region}:${aws_account_id}:project/${project}",
                     data=dict(

@@ -216,7 +216,13 @@ class Stack(cf.Stack):
 
         self.iam_role_for_codebuild = iam.Role(
             "IamRoleForCodeBuild",
-            p_RoleName=f"{self.project_name_slug}-codebuild-role",
+            p_RoleName=cf.Sub(
+                string="${project_name}-${aws_region}-codebuild-role",
+                data=dict(
+                    project_name=self.project_name_slug,
+                    aws_region=cf.AWS_REGION,
+                )
+            ),
             rp_AssumeRolePolicyDocument=cf.helpers.iam.AssumeRolePolicyBuilder(
                 cf.helpers.iam.ServicePrincipal.codebuild(),
             ).build(),

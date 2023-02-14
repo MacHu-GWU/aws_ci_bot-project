@@ -5,19 +5,19 @@
     // the common name prefix for AWS resources
     "project_name": "aws_ci_bot",
     // where you want to store CI/CD event data as a back up
-    "s3_bucket": "501105007192-us-east-1-artifacts",
+    "s3_bucket": "931365232219-us-east-2-artifacts",
     "s3_prefix": "projects/aws-ci-bot/",
     // the list of codecommit repo you want to create
     "codecommit_repo_list": [
-        "aws_ci_bot_test-project"
+        "aws_python-project"
     ],
     // the list of codebuild project you want to create
     "codebuild_project_list": [
         {
             // the name of the CodeBuild project
-            "project_name": "aws_ci_bot_test-project",
+            "project_name": "aws_python-project",
             // the CodeCommit repo name that you want to build
-            "repo_name": "aws_ci_bot_test-project",
+            "repo_name": "aws_python-project",
             // following the following CloudFormation document to customize
             // your codebuild project
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html

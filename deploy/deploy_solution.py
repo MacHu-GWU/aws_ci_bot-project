@@ -92,7 +92,13 @@ class Stack(cf.Stack):
 
         self.iam_role_for_lambda = iam.Role(
             "IamRoleForLambda",
-            p_RoleName=f"{self.project_name_slug}-lambda-role",
+            p_RoleName=cf.Sub(
+                string="${project_name}-${aws_region}-lambda-role",
+                data=dict(
+                    project_name=self.project_name_slug,
+                    aws_region=cf.AWS_REGION,
+                )
+            ),
             rp_AssumeRolePolicyDocument=cf.helpers.iam.AssumeRolePolicyBuilder(
                 cf.helpers.iam.ServicePrincipal.awslambda(),
             ).build(),

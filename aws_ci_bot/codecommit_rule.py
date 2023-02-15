@@ -51,12 +51,23 @@ def check_what_to_do(cc_event: CodeCommitEvent) -> CodeCommitHandlerActionEnum:
 
         # we don't trigger if source branch is not valid branch
         if not (
+            # based on purpose
             cc_event.source_is_feature_branch
-            or cc_event.source_is_develop_branch
             or cc_event.source_is_fix_branch
             or cc_event.source_is_build_branch
             or cc_event.source_is_doc_branch
             or cc_event.source_is_release_branch
+            or is_certain_semantic_branch(cc_event.source_branch, ["clean", "cleanup"])
+            # based on environment
+            or cc_event.source_is_develop_branch
+            or is_certain_semantic_branch(cc_event.source_branch, ["test",])
+            or is_certain_semantic_branch(cc_event.source_branch, ["int", ])
+            or is_certain_semantic_branch(cc_event.source_branch, ["stage", "staging"])
+            or is_certain_semantic_branch(cc_event.source_branch, ["qa", ])
+            or is_certain_semantic_branch(cc_event.source_branch, ["preprod",])
+            or is_certain_semantic_branch(cc_event.source_branch, ["prod", ])
+            or is_certain_semantic_branch(cc_event.source_branch, ["blue", ])
+            or is_certain_semantic_branch(cc_event.source_branch, ["green", ])
         ):
             logger.info(
                 "we DO NOT trigger build job "

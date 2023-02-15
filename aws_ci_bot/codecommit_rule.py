@@ -51,6 +51,7 @@ def check_what_to_do(cc_event: CodeCommitEvent) -> CodeCommitHandlerActionEnum:
 
         # we don't trigger if source branch is not valid branch
         if not (
+            # based on purpose
             cc_event.source_is_feature_branch
             or cc_event.source_is_develop_branch
             or cc_event.source_is_fix_branch
@@ -59,9 +60,10 @@ def check_what_to_do(cc_event: CodeCommitEvent) -> CodeCommitHandlerActionEnum:
             or is_certain_semantic_branch(cc_event.source_branch, ["lbd", "lambda"])  # do Lambda Function stuff
             or is_certain_semantic_branch(cc_event.source_branch, ["cf", "cft", "cloudformation"])  # do CloudFormation stuff
             or is_certain_semantic_branch(cc_event.source_branch, ["layer", ])  # do Lambda Layer stuff
-            or is_certain_semantic_branch(cc_event.source_branch, ["int", ])  # do Integration test stuff
             or is_certain_semantic_branch(cc_event.source_branch, ["clean", "cleanup"])  # do clean up stuff
-            or cc_event.source_is_release_branch
+            # based on env
+            or is_certain_semantic_branch(cc_event.source_branch, ["int", ])  # do Integration test stuff
+            or cc_event.source_is_release_branch # deploy to prod
         ):
             logger.info(
                 "we DO NOT trigger build job "

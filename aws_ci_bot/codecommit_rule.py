@@ -60,6 +60,7 @@ def check_what_to_do(cc_event: CodeCommitEvent) -> CodeCommitHandlerActionEnum:
             or is_certain_semantic_branch(cc_event.source_branch, ["cf", "cft", "cloudformation"])  # do CloudFormation stuff
             or is_certain_semantic_branch(cc_event.source_branch, ["layer", ])  # do Lambda Layer stuff
             or is_certain_semantic_branch(cc_event.source_branch, ["int", ])  # do Integration test stuff
+            or is_certain_semantic_branch(cc_event.source_branch, ["clean", "cleanup"])  # do clean up stuff
             or cc_event.source_is_release_branch
         ):
             logger.info(

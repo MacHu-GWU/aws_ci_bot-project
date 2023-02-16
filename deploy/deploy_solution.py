@@ -669,6 +669,7 @@ if __name__ == "__main__":
         stack_name=stack.stack_name,
         template=tpl,
         include_named_iam=True,
+        bucket=deploy_config["s3_bucket"],
         skip_prompt=True,
         timeout=120,
         change_set_timeout=60,

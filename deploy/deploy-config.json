@@ -11,7 +11,7 @@
     "codecommit_repo_list": [
         "aws_python-project",
         "aws_idp_doc_store-project",
-        "aws_idp_labeling-project",
+        "aws_idp_doc_type_labeling-project",
         "aws_idp_doc_classify-project",
         "aws_idp_data_extract-project"
     ],
@@ -51,9 +51,9 @@
         },
         {
             // the name of the CodeBuild project
-            "project_name": "aws_idp_labeling-project",
+            "project_name": "aws_idp_doc_type_labeling-project",
             // the CodeCommit repo name that you want to build
-            "repo_name": "aws_idp_labeling-project",
+            "repo_name": "aws_idp_doc_type_labeling-project",
             // following the following CloudFormation document to customize
             // your codebuild project
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html

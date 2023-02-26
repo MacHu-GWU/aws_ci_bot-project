@@ -7,8 +7,8 @@ Add necessary files to your CodeCommit repository
 ------------------------------------------------------------------------------
 Currently, the ``aws_ci_bot_test-project`` repository is empty, so we need to add some files to it. Fortunately, you can do this via the AWS CodeCommit console without having to install any Git clients. In this document, we will be using the AWS CodeCommit console to add the necessary files. However, feel free to use your favorite Git client if you prefer.
 
-- Find your repo in `AWS CodeCommit Repositories Console <https://console.aws.amazon.com/codesuite/codecommit/repositories?#>`_.
-- Add the ``codebuild-config.json`` file, so the CI-Bot knows that which CodeBuild project you want to use to run CI for this repo:
+1. Find your repo in `AWS CodeCommit Repositories Console <https://console.aws.amazon.com/codesuite/codecommit/repositories?#>`_.
+2. Add the ``codebuild-config.json`` file, so the CI-Bot knows that which CodeBuild project you want to use to run CI for this repo:
     - You can click "Create File".
 
     .. image:: ./images/create-file.png
@@ -30,7 +30,7 @@ Currently, the ``aws_ci_bot_test-project`` repository is empty, so we need to ad
 
     .. image:: ./images/add-codebuild-config.png
 
-- Add the ``buildspec.yml`` file, so the CodeBuild knows what to run in build job. In this example, it is just a dummy build job that runs a lot of ``echo`` commands.
+3. Add the ``buildspec.yml`` file, so the CodeBuild knows what to run in build job. In this example, it is just a dummy build job that runs a lot of ``echo`` commands.
     - You can click "Add File", "Create File".
 
     .. image:: ./images/add-file.png
@@ -60,7 +60,7 @@ Currently, the ``aws_ci_bot_test-project`` repository is empty, so we need to ad
 
     .. image:: ./images/add-buildspec-yml.png
 
-- Add a ``chore.txt`` file. Because this is an example repo, we can simulate that we are adding new features by updating the content of the ``chore.txt`` file. You can click "Add File", "Create File", put ``hello world`` to the content, set "File name" as ``chore.txt``, put your "Author name" and "Email address", then click "Commit Changes"
+4. Add a ``chore.txt`` file. Because this is an example repo, we can simulate that we are adding new features by updating the content of the ``chore.txt`` file. You can click "Add File", "Create File", put ``hello world`` to the content, set "File name" as ``chore.txt``, put your "Author name" and "Email address", then click "Commit Changes"
 
 Now this repo is all set for testing. In production, this is also the step we should do before checking in any real application code.
 
@@ -78,6 +78,7 @@ Now we want to simulate a scenario that a developer created a new branch, and st
 
 .. image:: ./images/create-branch-1.png
 .. image:: ./images/create-branch-2.png
+    :align: center
     :width: 600
 
 3. Switch to ``feature/1`` branch, and edit the ``chore.txt`` file, enter random value to the content like ``hello alice``, and commit the change.
@@ -90,17 +91,22 @@ Now we want to simulate a scenario that a developer created a new branch, and st
 .. image:: ./images/create-pull-request-1.png
 .. image:: ./images/create-pull-request-2.png
 
-5. **Switch to** "Activity" Tab, **you will see the CI bot just triggered a CodeBuild job run and automatically posted a comment to the PR**, you can click on the link to jump to the CodeBuild job run, or to the detailed changes for the commit. **After a while, when the job run Success or Failed, the CI bot will automatically reply to the comment and tell your the result**.
+5. **Switch to** the "Activity" tab, **you will see the CI bot just triggered a CodeBuild job run and automatically posted a comment to the PR**. You can click on the link to jump to the CodeBuild job run, or to the detailed changes for the commit. **After a while, when the job run Success or Failed, the CI bot will automatically reply to the comment and tell your the result**.
 
 .. image:: ./images/trigger-build-1.png
 
-**Sample Comment**
+6. While the CI is building, you can see there is a new build job show up in the CodeBuild job run console.
 
-    🌴 A build run is triggered, let's relax.
+.. image:: ./images/codebuild-build-job-list.png
 
-    - build run id: `aws_ci_bot-test:cd78cc7e-f538-405e-b4a0-5dddf96fe0f7 <https://us-east-2.console.aws.amazon.com/codesuite/codebuild/111122223333/projects/aws_ci_bot-test/build/aws_ci_bot-test:cd78cc7e-f538-405e-b4a0-5dddf96fe0f7/?region=us-east-2>`_
-    - commit id: `c9f2463 <https://us-east-2.console.aws.amazon.com/codesuite/codecommit/repositories/aws_ci_bot-test/pull-requests/1/commit/c9f246376b88d6d63dc02e61059f31d3fc3227c4?region=us-east-2>`_
-    - commit message: "Edited chore.txt"
-    - committer name: "alice"
+7. You can see the detailed log of the build job in the "Build logs" tab.
 
-    🟢 Build Run SUCCEEDED
+.. image:: ./images/codebuild-build-job-details.png
+
+8. Also, ``aws_ci_bot`` solution automatically generates lots of helpful environment variables to provide more details about the build job. You can utilize these environment variables in your CI/CD automation scripts.
+
+.. image:: ./images/environment-variables.png
+
+9. After the build job is finished, you can see the result in the "Build details" tab.
+
+.. image:: ./images/trigger-build-2.png

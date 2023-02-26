@@ -47,15 +47,14 @@
     :target: https://pypi.org/pypi/aws_ci_bot#files
 
 
+Welcome to ``aws_ci_bot`` Documentation
+==============================================================================
 .. image:: ./docs/source/_static/aws_ci_bot-logo.png
     :target: https://aws_ci_bot.readthedocs.io/index.html
     :alt: aws_ci_bot logo
     :width: 200px
     :align: center
 
-
-Welcome to ``aws_ci_bot`` Documentation
-==============================================================================
 🤖 ``aws_ci_bot`` is a fully serverless, scalable, customizable, flexible solution that allows you to set up a production ready CI build pipeline for as many git repositories on as many AWS Accounts.
 
 - Serverless: this solution is fully serverless, meaning there is no need to set up any servers. It can be deployed in just a few minutes.

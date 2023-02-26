@@ -50,6 +50,8 @@
 .. image:: ./docs/source/_static/aws_ci_bot-logo.png
     :target: https://aws_ci_bot.readthedocs.io/index.html
     :alt: aws_ci_bot logo
+    :width: 200px
+    :align: center
 
 
 Welcome to ``aws_ci_bot`` Documentation

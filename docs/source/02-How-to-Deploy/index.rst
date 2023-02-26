@@ -37,7 +37,7 @@ Deploy the Solution
     git clone --depth 1 --branch ${version} https://github.com/MacHu-GWU/aws_ci_bot-project.git
 
     # Example
-    git clone --depth 1 --branch 0.3.1 https://github.com/MacHu-GWU/aws_ci_bot-project.git
+    git clone --depth 1 --branch 0.4.1 https://github.com/MacHu-GWU/aws_ci_bot-project.git
 
 2. Create an Python virtual environment and install the required Python dependencies:
 
@@ -314,11 +314,11 @@ Below is the sample command line prompt when I run ``python ./deploy/deploy_aws_
     Building wheels for collected packages: aws-ci-bot
       Building wheel for aws-ci-bot (setup.py): started
       Building wheel for aws-ci-bot (setup.py): finished with status 'done'
-      Created wheel for aws-ci-bot: filename=aws_ci_bot-0.3.1-py3-none-any.whl size=28543 sha256=9845dd38c2f3ef4a4be328978d00a292217b5c1ed40dd0d94533c00251d47fa1
+      Created wheel for aws-ci-bot: filename=aws_ci_bot-0.4.1-py3-none-any.whl size=28543 sha256=9845dd38c2f3ef4a4be328978d00a292217b5c1ed40dd0d94533c00251d47fa1
       Stored in directory: /Users/sanhehu/Library/Caches/pip/wheels/f5/8d/fc/18bfae466c09eec3c988a8d2f04aadedc4974d24734dfefbd4
     Successfully built aws-ci-bot
     Installing collected packages: aws-ci-bot
-    Successfully installed aws-ci-bot-0.3.1
+    Successfully installed aws-ci-bot-0.4.1
     open cloudformation console for status: https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks?filteringStatus=active&filteringText=aws-ci-bot&viewNested=true&hideStacks=false&stackId=
     ================== Deploy stack: aws-ci-bot ==================
       preview stack in AWS CloudFormation console: https://console.aws.amazon.com/cloudformation/home?#/stacks?filteringStatus=active&filteringText=aws-ci-bot&viewNested=true&hideStacks=false
@@ -357,6 +357,8 @@ Below is the sample command line prompt when I run ``python ./deploy/deploy_aws_
       done
 
 .. image:: ./images/create-cloudformation-stack.png
+
+Note, sometimes the stack creation will fail due to the reason that a CodeCommit repo is created, but not ready to be used with CodeStar notification rules. So the creation of the CodeStart notification rules will fail. In this case, you can delete your CloudFormation stack, and manually delete the CodeCommit repo and CodeBuild project created by the previous CloudFormation stack. Because they are protected resources that won't be deleted along with CloudFormation stack. Then you can go to this `deployment script <https://github.com/MacHu-GWU/aws_ci_bot-project/blob/main/aws_ci_bot/deploy/script.py#L107>`_, and temporarily comment out this line ``tpl.add(stack.rg_6_notification_rules)``, and run the ``python ./deploy/deploy_aws_ci_bot.py`` command again. It will skip the creation of CodeStart notification rules. Then you uncomment it back and re-run the command.
 
 
 Next Step

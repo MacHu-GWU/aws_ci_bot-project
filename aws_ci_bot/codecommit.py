@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+"""
+This module defines the CodeCommit event handling logics.
+"""
+
 import dataclasses
 
 from aws_codecommit import (

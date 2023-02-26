@@ -24,10 +24,12 @@ def get_s3_console_url(
 ) -> str:  # pragma: no cover
     """
     Return an AWS Console url that you can use to open it in your browser.
+
     :param bucket: example, ``"my-bucket"``
     :param prefix: example, ``"my-folder/"``
     :param s3_uri: example, ``"s3://my-bucket/my-folder/data.json"``
     :param is_us_gov_cloud: whether it is a gov cloud
+
     Example::
         >>> get_s3_console_url(s3_uri="s3://my-bucket/my-folder/data.json")
         https://s3.console.aws.amazon.com/s3/object/my-bucket?prefix=my-folder/data.json

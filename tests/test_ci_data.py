@@ -27,4 +27,4 @@ class TestCIData:
 if __name__ == "__main__":
     from aws_ci_bot.tests import run_cov_test
 
-    run_cov_test(__file__, "aws_ci_bot.ci_data")
+    run_cov_test(__file__, "aws_ci_bot.ci_data", preview=False)

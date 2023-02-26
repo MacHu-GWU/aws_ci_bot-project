@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+"""
+SNS event handling in Lambda function.
+"""
+
 import typing as T
 import json
 from datetime import datetime
@@ -14,11 +18,15 @@ from . import logger
 
 def extract_sns_message_dict(event: dict) -> dict:
     """
+    Extract the AWS CodeStar notification event from the received Lambda event.
+    Lambda event includes the SNS message body, and the SNS message body includes
+    the AWS CodeStar notification event.
+
     :param event: the original lambda function input payload
-    :return: the sns message data in dict
+    :return: the AWS CodeStar notification event data in dict
     """
-    sns_event = SNSTopicNotificationEvent(event)
-    return json.loads(sns_event.records[0].message)
+    sns_event = SNSTopicNotificationEvent.from_dict(event)
+    return json.loads(sns_event.Records[0].message)
 
 
 def encode_partition_key(dt: datetime) -> str:
@@ -51,7 +59,8 @@ def upload_ci_event(
     :param bucket:
     :param prefix:
     :param verbose:
-    :return: S3 uri
+
+    :return: the S3 uri where the event is uploaded
     """
     if verbose:
         logger.info("Upload CI event to S3 ...")

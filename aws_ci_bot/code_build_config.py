@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+"""
+This module defines the ``codebuild-config.json`` file schema, that defines which
+CodeBuild project the git repo should use to run CI job.
+"""
+
 import typing as T
 import dataclasses
 
@@ -12,6 +17,10 @@ from . import logger
 
 @dataclasses.dataclass
 class BuildJobConfig:
+    """
+    Per CodeBuild project configuration. One git repo can map to multiple
+    CodeBuild projects.
+    """
     project_name: str = dataclasses.field()
     is_batch_job: bool = dataclasses.field()
     buildspec: T.Optional[str] = dataclasses.field(default=None)

@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
+"""
+This module defines how to response to CodeCommit event in different situations.
+"""
+
 import enum
 
 from aws_codecommit import (
     CodeCommitEvent,
     is_certain_semantic_branch,
-    SemanticBranchEnum,
     is_certain_semantic_commit,
     SemanticCommitEnum,
 )
@@ -28,43 +31,111 @@ def check_what_to_do(cc_event: CodeCommitEvent) -> CodeCommitHandlerActionEnum:
     git branching rule and git commit rule, decide when to trigger the build.
 
     This function should take a ``CodeCommitEvent`` object as input, and return
-    a ``CodeCommitHandlerActionEnum`` object as output.
+    a ``CodeCommitHandlerActionEnum`` object.
     """
     logger.header("Detect whether we should trigger build", "-", 60)
 
+    # ----------------------------------------------------------------------
+    # We don't trigger if commit message has 'chore'
+    # ----------------------------------------------------------------------
+    if is_certain_semantic_commit(
+        cc_event.commit_message,
+        stub=SemanticCommitEnum.chore.value,
+    ):
+        logger.info(
+            f"we DO NOT trigger build job for "
+            f"commit message {SemanticCommitEnum.chore.value!r}"
+        )
+        return CodeCommitHandlerActionEnum.nothing
+
     # ==========================================================================
-    # Case: direct commit to any branch
+    # Case 1: direct commit to any branch
     #
     # either you write your own if/else logic here,
-    # either you uncomment one and only one of the following block of code.
+    # either you uncomment one and only one of the following block of code:
+    # 1.1 (default), 1.2, 1.3
     # ==========================================================================
     if cc_event.is_commit_event:
         # ----------------------------------------------------------------------
-        # Don't build for direct commit
+        # 1.1 Don't build for direct commit
         # ----------------------------------------------------------------------
+
         logger.info(
             f"we don't trigger build job for "
             f"event type {cc_event.event_type!r} on {cc_event.source_branch}"
         )
         return CodeCommitHandlerActionEnum.nothing
-        # ----------------------------------------------------------------------
-        # Only build for direct commit to master branch
-        # ----------------------------------------------------------------------
-    # run build job if it is a Pull Request related event
-    elif cc_event.is_pr_created_event or cc_event.is_pr_update_event:
-        # we don't trigger if commit message has 'NO BUILD'
-        if is_certain_semantic_commit(
-            cc_event.commit_message,
-            stub=SemanticCommitEnum.chore.value,
-        ):
-            logger.info(
-                f"we DO NOT trigger build job for "
-                f"commit message {SemanticCommitEnum.chore.value!r}"
-            )
-            return CodeCommitHandlerActionEnum.nothing
 
-        # we don't trigger if source branch is not valid branch
-        if not (
+        # ----------------------------------------------------------------------
+        # 1.2 Only build for direct commit to main branch
+        # ----------------------------------------------------------------------
+
+        # if cc_event.source_is_main_branch:
+        #     logger.info(f"trigger build for direct commit to main branch.")
+        #     return CodeCommitHandlerActionEnum.start_build
+        # else:
+        #     logger.info(
+        #         f"we don't trigger build job for: "
+        #         f"event type is {cc_event.event_type!r}, "
+        #         f"branch is {cc_event.source_branch!r}."
+        #     )
+        #     return CodeCommitHandlerActionEnum.nothing
+
+        # ----------------------------------------------------------------------
+        # 1.3 Only build for direct commit to the following pre-defined branch
+        # ----------------------------------------------------------------------
+
+        # if (
+        #     cc_event.source_is_main_branch
+        #     or is_certain_semantic_branch(cc_event.source_branch, ["dev",])
+        #     or is_certain_semantic_branch(cc_event.source_branch, ["test", ])
+        #     or is_certain_semantic_branch(cc_event.source_branch, ["prod", ])
+        # ):
+        #     logger.info(
+        #         f"trigger build for direct commit to main, dev, test, prod branch."
+        #     )
+        #     return CodeCommitHandlerActionEnum.start_build
+        # else:
+        #     logger.info(
+        #         f"we don't trigger build job for: "
+        #         f"event type is {cc_event.event_type!r}, "
+        #         f"branch is {cc_event.source_branch!r}."
+        #     )
+        #     return CodeCommitHandlerActionEnum.nothing
+
+    # ==========================================================================
+    # Case 2: Pull Request create / update event
+    #
+    # either you write your own if/else logic here,
+    # either you uncomment one and only one of the following block of code:
+    # 2.1, 2.2, 2.3 (default)
+    # ==========================================================================
+    elif cc_event.is_pr_created_event or cc_event.is_pr_update_event:
+        # ----------------------------------------------------------------------
+        # 2.1 Build for all Pull Request create / update event
+        # ----------------------------------------------------------------------
+
+        # return CodeCommitHandlerActionEnum.start_build
+
+        # ----------------------------------------------------------------------
+        # 2.2 Build for Pull Request create / update event only if the target
+        # branch is 'main'.
+        # ----------------------------------------------------------------------
+
+        # if cc_event.target_is_main_branch:
+        #     logger.info(f"trigger build for Pull request to main branch.")
+        #     return CodeCommitHandlerActionEnum.start_build
+        # else:
+        #     logger.info(
+        #         f"we don't trigger build for Pull request to a branch that is not 'main'."
+        #     )
+        #     return CodeCommitHandlerActionEnum.nothing
+
+        # ----------------------------------------------------------------------
+        # 2.3 Build for Pull Request create / update event only if the source
+        # branch is the following pre-defined branch, regardless of the target branch
+        # ----------------------------------------------------------------------
+        if (
             # based on purpose
             cc_event.source_is_feature_branch
             or cc_event.source_is_fix_branch
@@ -74,42 +145,66 @@ def check_what_to_do(cc_event: CodeCommitEvent) -> CodeCommitHandlerActionEnum:
             or is_certain_semantic_branch(cc_event.source_branch, ["clean", "cleanup"])
             # based on environment
             or cc_event.source_is_develop_branch
-            or is_certain_semantic_branch(cc_event.source_branch, ["test",])
-            or is_certain_semantic_branch(cc_event.source_branch, ["int", ])
+            or is_certain_semantic_branch(cc_event.source_branch, ["test"])
+            or is_certain_semantic_branch(cc_event.source_branch, ["int"])
             or is_certain_semantic_branch(cc_event.source_branch, ["stage", "staging"])
-            or is_certain_semantic_branch(cc_event.source_branch, ["qa", ])
-            or is_certain_semantic_branch(cc_event.source_branch, ["preprod",])
-            or is_certain_semantic_branch(cc_event.source_branch, ["prod", ])
-            or is_certain_semantic_branch(cc_event.source_branch, ["blue", ])
-            or is_certain_semantic_branch(cc_event.source_branch, ["green", ])
+            or is_certain_semantic_branch(cc_event.source_branch, ["qa"])
+            or is_certain_semantic_branch(cc_event.source_branch, ["preprod"])
+            or is_certain_semantic_branch(cc_event.source_branch, ["prod"])
+            or is_certain_semantic_branch(cc_event.source_branch, ["blue"])
+            or is_certain_semantic_branch(cc_event.source_branch, ["green"])
         ):
+            logger.info(
+                f"trigger build for pull request from {cc_event.source_branch!r} branch."
+            )
+            return CodeCommitHandlerActionEnum.start_build
+        else:
             logger.info(
                 "we DO NOT trigger build job "
                 f"if PR source branch is {cc_event.target_branch!r}"
             )
             return CodeCommitHandlerActionEnum.nothing
-
-        # we don't trigger if target branch is not main
-        if not cc_event.target_is_main_branch:
-            logger.info(
-                "we DO NOT trigger build job "
-                "if PR target branch is not 'main' "
-                f"it is {cc_event.target_branch!r}"
-            )
-            return CodeCommitHandlerActionEnum.nothing
-
-        logger.info(
-            f"we don't trigger build job for "
-            f"event type {cc_event.event_type!r} on {cc_event.source_branch}"
-        )
-        return CodeCommitHandlerActionEnum.start_build
-    # always trigger on PR merge event
+    # ==========================================================================
+    # Case 3: Pull Request merge event
+    #
+    # either you write your own if/else logic here,
+    # either you uncomment one and only one of the following block of code:
+    # 3.1 (default), 3.2
+    # ==========================================================================
     elif cc_event.is_pr_merged_event:
+        # ----------------------------------------------------------------------
+        # 3.1 Build for all Pull Request merge event
+        # ----------------------------------------------------------------------
+
         logger.info(
             f"trigger build job for PR merged event, from branch "
             f"{cc_event.source_branch!r} to {cc_event.target_branch!r}"
         )
         return CodeCommitHandlerActionEnum.start_build
+
+        # ----------------------------------------------------------------------
+        # 3.2 Build for Pull Request merge event only if the target branch is 'main'.
+        # regardless of the source branch
+        # ----------------------------------------------------------------------
+
+        # if cc_event.target_is_main_branch:
+        #     logger.info(
+        #         f"trigger build job for PR merged event, from branch "
+        #         f"{cc_event.source_branch!r} to {cc_event.target_branch!r}"
+        #     )
+        #     return CodeCommitHandlerActionEnum.start_build
+        # else:
+        #     logger.info(
+        #         f"we don't trigger build job for PR merged event, from branch "
+        #         f"{cc_event.source_branch!r} to {cc_event.target_branch!r}"
+        #     )
+        #     return CodeCommitHandlerActionEnum.nothing
+
+    # ==========================================================================
+    # Case 4: Other event
+    #
+    # either you write your own if/else logic here, either use the default
+    # ==========================================================================
     # we don't trigger on other event
     elif (
         cc_event.is_create_branch_event

@@ -41,6 +41,9 @@ class CIData:
         self,
         prefix: str = CI_DATA_PREFIX,
     ) -> dict:
+        """
+        env_var is a dict of environment variable key value pair.
+        """
         env_var = dict()
         for attr, value in dataclasses.asdict(self).items():
             if bool(value):
@@ -54,6 +57,9 @@ class CIData:
         env_var: dict,
         prefix: str = CI_DATA_PREFIX,
     ) -> "CIData":
+        """
+        env_var is a dict of environment variable key value pair.
+        """
         field_set = {field.name for field in dataclasses.fields(cls)}
         kwargs = dict()
         for field_name in field_set:

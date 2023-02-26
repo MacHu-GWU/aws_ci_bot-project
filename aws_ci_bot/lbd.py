@@ -24,6 +24,7 @@ bsm = BotoSesManager()
 def lambda_handler(event: dict, context: dict):
     logger.header("START", "=", 60)
 
+    # parse event
     logger.header("Parse SNS message", "-", 60)
     message_dict = extract_sns_message_dict(event)
 
@@ -35,6 +36,7 @@ def lambda_handler(event: dict, context: dict):
     else:  # pragma: no cover
         raise NotImplementedError
 
+    # upload event to S3 for debug
     s3_uri = upload_ci_event(
         s3_client=bsm.get_client(AwsServiceEnum.S3),
         event_dict=event,
@@ -44,6 +46,7 @@ def lambda_handler(event: dict, context: dict):
     )
     s3_console_url = get_s3_console_url(s3_uri=s3_uri)
 
+    # handle the event
     if isinstance(ci_event, CodeCommitEvent):
         cc_event_handler = CodeCommitEventHandler(
             bsm=bsm,

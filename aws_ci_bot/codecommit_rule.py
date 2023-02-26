@@ -147,6 +147,11 @@ def check_what_to_do(cc_event: CodeCommitEvent) -> CodeCommitHandlerActionEnum:
             or cc_event.source_is_doc_branch
             or cc_event.source_is_release_branch
             or is_certain_semantic_branch(cc_event.source_branch, ["clean", "cleanup"])
+
+            or is_certain_semantic_branch(cc_event.source_branch, ["cf", "cft", "cloudformation"])  # do CloudFormation stuff
+            or is_certain_semantic_branch(cc_event.source_branch, ["lbd", "lambda"])  # do Lambda Function stuff
+            or is_certain_semantic_branch(cc_event.source_branch, ["layer", ])  # do Lambda Layer stuff
+
             # based on environment
             or cc_event.source_is_develop_branch
             or is_certain_semantic_branch(cc_event.source_branch, ["test"])
@@ -176,15 +181,16 @@ def check_what_to_do(cc_event: CodeCommitEvent) -> CodeCommitHandlerActionEnum:
     # 3.1 (default), 3.2
     # ==========================================================================
     elif cc_event.is_pr_merged_event:
+        return CodeCommitHandlerActionEnum.nothing
         # ----------------------------------------------------------------------
         # 3.1 Build for all Pull Request merge event
         # ----------------------------------------------------------------------
 
-        logger.info(
-            f"trigger build job for PR merged event, from branch "
-            f"{cc_event.source_branch!r} to {cc_event.target_branch!r}"
-        )
-        return CodeCommitHandlerActionEnum.start_build
+        # logger.info(
+        #     f"trigger build job for PR merged event, from branch "
+        #     f"{cc_event.source_branch!r} to {cc_event.target_branch!r}"
+        # )
+        # return CodeCommitHandlerActionEnum.start_build
 
         # ----------------------------------------------------------------------
         # 3.2 Build for Pull Request merge event only if the target branch is 'main'.

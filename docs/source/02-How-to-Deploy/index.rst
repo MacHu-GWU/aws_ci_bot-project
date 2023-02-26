@@ -22,7 +22,9 @@ Pre-requisites
     - ``arn:aws:iam::aws:policy/AmazonSNSFullAccess``: we need this permission to create
     - ``arn:aws:iam::aws:policy/AWSCloudFormationFullAccess``: we need this permission to deploy the solution via AWS CloudFormation.
     - ``sts:GetCallerIdentity``: we need this permission to figure out the AWS Account ID.
-4. `Create an S3 bucket <https://s3.console.aws.amazon.com/s3/bucket/create>`_ to store the CloudFormation template and the CI bot events. Just enter the "Bucket name" and "AWS Region" and leave everything else as the default. By default, it block public access and the data is encrypted at the rest. I personally prefer to use ``${aws_account_id}-${aws_region}-artifacts``, for example ``111122223333-us-east-1-artifacts`` for the bucket name. PICTURE HERE
+4. `Create an S3 bucket <https://s3.console.aws.amazon.com/s3/bucket/create>`_ to store the CloudFormation template and the CI bot events. Just enter the "Bucket name" and "AWS Region" and leave everything else as the default. By default, it block public access and the data is encrypted at the rest. I personally prefer to use ``${aws_account_id}-${aws_region}-artifacts``, for example ``111122223333-us-east-1-artifacts`` for the bucket name.
+
+.. image:: ./images/create-bucket.png
 
 
 Deploy the Solution
@@ -68,30 +70,28 @@ Deploy the Solution
 
 A Concrete Example
 ------------------------------------------------------------------------------
-Below is the default CI strategy definition in the `codecommit_rule.py <./aws_ci_bot/codecommit_rule.py>`_ file.
+.. contents::
+    :class: this-will-duplicate-information-and-it-is-still-useful-here
+    :depth: 1
+    :local:
+
+
+CI Strategy Definition
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Below is the default CI strategy definition in the `codecommit_rule.py <./aws_ci_bot/codecommit_rule.py>`_ file. The default CI strategy is:
+
+- We don't build if commit message has 'chore'.
+- We don't build for direct commit.
+- We only build for 'Pull Request create / update' event, only if the source branch is the following pre-defined branch, regardless of the target branch.
+- We build for all 'Pull Request merge' event.
+- We don't build for any other events, such as 'create branch', 'delete branch', 'comment', 'approve pr'.
 
 .. code-block:: python
 
     def check_what_to_do(cc_event: CodeCommitEvent) -> CodeCommitHandlerActionEnum:
-        """
-        Analyze the CodeCommit event, check what to do.
-
-        This function determines when to trigger an AWS CodeBuild build job based
-        on your custom Git branching and commit rules, as well as
-        which branch, tag, or commit to build from. The default settings are suitable
-        for most use cases, but you can customize the function by following
-        the comments provided.
-
-        This solution designed for any type of project for any programming language
-        and for any Git Workflow.
-
-        This function should take a ``CodeCommitEvent`` object as input, and return
-        a ``CodeCommitHandlerActionEnum`` object.
-        """
         logger.header("Detect whether we should trigger build", "-", 60)
-
         # ----------------------------------------------------------------------
-        # We don't trigger if commit message has 'chore'
+        # We don't build if commit message has 'chore'
         # ----------------------------------------------------------------------
         if is_certain_semantic_commit(
             cc_event.commit_message,
@@ -102,7 +102,6 @@ Below is the default CI strategy definition in the `codecommit_rule.py <./aws_ci
                 f"commit message {SemanticCommitEnum.chore.value!r}"
             )
             return CodeCommitHandlerActionEnum.nothing
-
         # ==========================================================================
         # Case 1: direct commit to any branch
         #
@@ -114,50 +113,11 @@ Below is the default CI strategy definition in the `codecommit_rule.py <./aws_ci
             # ----------------------------------------------------------------------
             # 1.1 Don't build for direct commit
             # ----------------------------------------------------------------------
-
             logger.info(
                 f"we don't trigger build job for "
                 f"event type {cc_event.event_type!r} on {cc_event.source_branch}"
             )
             return CodeCommitHandlerActionEnum.nothing
-
-            # ----------------------------------------------------------------------
-            # 1.2 Only build for direct commit to main branch
-            # ----------------------------------------------------------------------
-
-            # if cc_event.source_is_main_branch:
-            #     logger.info(f"trigger build for direct commit to main branch.")
-            #     return CodeCommitHandlerActionEnum.start_build
-            # else:
-            #     logger.info(
-            #         f"we don't trigger build job for: "
-            #         f"event type is {cc_event.event_type!r}, "
-            #         f"branch is {cc_event.source_branch!r}."
-            #     )
-            #     return CodeCommitHandlerActionEnum.nothing
-
-            # ----------------------------------------------------------------------
-            # 1.3 Only build for direct commit to the following pre-defined branch
-            # ----------------------------------------------------------------------
-
-            # if (
-            #     cc_event.source_is_main_branch
-            #     or is_certain_semantic_branch(cc_event.source_branch, ["dev",])
-            #     or is_certain_semantic_branch(cc_event.source_branch, ["test", ])
-            #     or is_certain_semantic_branch(cc_event.source_branch, ["prod", ])
-            # ):
-            #     logger.info(
-            #         f"trigger build for direct commit to main, dev, test, prod branch."
-            #     )
-            #     return CodeCommitHandlerActionEnum.start_build
-            # else:
-            #     logger.info(
-            #         f"we don't trigger build job for: "
-            #         f"event type is {cc_event.event_type!r}, "
-            #         f"branch is {cc_event.source_branch!r}."
-            #     )
-            #     return CodeCommitHandlerActionEnum.nothing
-
         # ==========================================================================
         # Case 2: Pull Request create / update event
         #
@@ -166,26 +126,6 @@ Below is the default CI strategy definition in the `codecommit_rule.py <./aws_ci
         # 2.1, 2.2, 2.3 (default)
         # ==========================================================================
         elif cc_event.is_pr_created_event or cc_event.is_pr_update_event:
-            # ----------------------------------------------------------------------
-            # 2.1 Build for all Pull Request create / update event
-            # ----------------------------------------------------------------------
-
-            # return CodeCommitHandlerActionEnum.start_build
-
-            # ----------------------------------------------------------------------
-            # 2.2 Build for Pull Request create / update event only if the target
-            # branch is 'main'.
-            # ----------------------------------------------------------------------
-
-            # if cc_event.target_is_main_branch:
-            #     logger.info(f"trigger build for Pull request to main branch.")
-            #     return CodeCommitHandlerActionEnum.start_build
-            # else:
-            #     logger.info(
-            #         f"we don't trigger build for Pull request to a branch that is not 'main'."
-            #     )
-            #     return CodeCommitHandlerActionEnum.nothing
-
             # ----------------------------------------------------------------------
             # 2.3 Build for Pull Request create / update event only if the source
             # branch is the following pre-defined branch, regardless of the target branch
@@ -236,25 +176,6 @@ Below is the default CI strategy definition in the `codecommit_rule.py <./aws_ci
                 f"{cc_event.source_branch!r} to {cc_event.target_branch!r}"
             )
             return CodeCommitHandlerActionEnum.start_build
-
-            # ----------------------------------------------------------------------
-            # 3.2 Build for Pull Request merge event only if the target branch is 'main'.
-            # regardless of the source branch
-            # ----------------------------------------------------------------------
-
-            # if cc_event.target_is_main_branch:
-            #     logger.info(
-            #         f"trigger build job for PR merged event, from branch "
-            #         f"{cc_event.source_branch!r} to {cc_event.target_branch!r}"
-            #     )
-            #     return CodeCommitHandlerActionEnum.start_build
-            # else:
-            #     logger.info(
-            #         f"we don't trigger build job for PR merged event, from branch "
-            #         f"{cc_event.source_branch!r} to {cc_event.target_branch!r}"
-            #     )
-            #     return CodeCommitHandlerActionEnum.nothing
-
         # ==========================================================================
         # Case 4: Other event
         #
@@ -278,6 +199,8 @@ Below is the default CI strategy definition in the `codecommit_rule.py <./aws_ci
             return CodeCommitHandlerActionEnum.nothing
 
 
+Deploy Config Definition
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Below is a sample ``deploy-config.json`` file. It defines that:
 
 - ``aws_ci_bot`` is the common name prefix for all AWS resources used in this solution.
@@ -351,13 +274,15 @@ Below is a sample ``deploy-config.json`` file. It defines that:
     }
 
 
+Run Deployment Script
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Below is the sample command line prompt when I run ``python ./deploy/deploy_aws_ci_bot.py``, it build the Lambda deployment package, and deploy the solution via CloudFormation template. As you can see in the CloudFormation deployment log, we created the following AWS resources:
 
 - one IAM Role and Policy for Lambda Function.
 - one IAM Role and Policy for Codebuild job run.
 - one SNS Topic to receive CodeCommit and CodeBuild notification event.
+- several of CodeCommit and CodeBuild notification rules are created.
 - one Lambda function to handle notification event and trigger build job based on the CI strategy we defined.
-
 
 ::
 
@@ -428,3 +353,5 @@ Below is the sample command line prompt when I run ``python ./deploy/deploy_aws_
         on 11 th attempt, elapsed 55 seconds, remain 125 seconds ...
         reached status 🟢 'CREATE_COMPLETE'
       done
+
+.. image:: ./images/create-cloudformation-stack.png

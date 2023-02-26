@@ -40,7 +40,7 @@ def check_what_to_do(cc_event: CodeCommitEvent) -> CodeCommitHandlerActionEnum:
     logger.header("Detect whether we should trigger build", "-", 60)
 
     # ----------------------------------------------------------------------
-    # We don't trigger if commit message has 'chore'
+    # We don't build if commit message has 'chore'
     # ----------------------------------------------------------------------
     if is_certain_semantic_commit(
         cc_event.commit_message,

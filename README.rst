@@ -47,7 +47,7 @@
     :target: https://pypi.org/pypi/aws_ci_bot#files
 
 
-.. image:: ./docs/source/_static/aws_ci_bot_logo.png
+.. image:: ./docs/source/_static/aws_ci_bot-logo.png
     :target: https://aws_ci_bot.readthedocs.io/index.html
     :alt: aws_ci_bot logo
 

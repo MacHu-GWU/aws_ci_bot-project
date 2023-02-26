@@ -15,6 +15,17 @@ Backlog
 **Miscellaneous**
 
 
+0.4.1 (2022-02-26)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Features and Improvements**
+
+- greatly simplifies the deployment process.
+
+**Miscellaneous**
+
+- add dedicated documentation website, greatly improves the documentations.
+
+
 0.3.1 (2022-12-18)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **Features and Improvements**

@@ -76,6 +76,8 @@ A Concrete Example
     :local:
 
 
+.. _ci-strategy-definition:
+
 CI Strategy Definition
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Below is the default CI strategy definition in the `codecommit_rule.py <./aws_ci_bot/codecommit_rule.py>`_ file. The default CI strategy is:

@@ -62,24 +62,23 @@ Currently, the ``aws_ci_bot_test-project`` repository is empty, so we need to ad
 
 - Add a ``chore.txt`` file. Because this is an example repo, we can simulate that we are adding new features by updating the content of the ``chore.txt`` file. You can click "Add File", "Create File", put ``hello world`` to the content, set "File name" as ``chore.txt``, put your "Author name" and "Email address", then click "Commit Changes"
 
-Now the repo is all set. In production, we should also do this before checking in any real application code.
+Now this repo is all set for testing. In production, this is also the step we should do before checking in any real application code.
 
 
 Trigger a Build Job by Creating a Pull Request
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The deployed CI strategy is:
+In the :ref:`ci-strategy-definition` section, our CI strategy is:
 
-- We only build for 'Pull Request create / update' event, only if the source branch is the following pre-defined branch, regardless of the target branch.
+- We only build for 'Pull Request create / update' event, only if the source branch is the following pre-defined branch (please check the :ref:`ci-strategy-definition` for details), regardless of the target branch.
 
 Now we want to simulate a scenario that a developer created a new branch, and started a Pull Request to merge to the ``main`` branch.
-
-**Pull Request Experiment**
 
 1. Find your repo in `AWS CodeCommit Repositories Console <https://console.aws.amazon.com/codesuite/codecommit/repositories?#>`_, enter your repo, then click "Branches" on the side bar.
 2. Click "Create branch" button and give it a name called ``feature/1``.
 
 .. image:: ./images/create-branch-1.png
 .. image:: ./images/create-branch-2.png
+    :width: 600
 
 3. Switch to ``feature/1`` branch, and edit the ``chore.txt`` file, enter random value to the content like ``hello alice``, and commit the change.
 

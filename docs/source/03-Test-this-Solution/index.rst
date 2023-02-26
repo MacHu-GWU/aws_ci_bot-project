@@ -7,60 +7,60 @@ Add necessary files to your CodeCommit repository
 ------------------------------------------------------------------------------
 Currently, the ``aws_ci_bot_test-project`` repository is empty, so we need to add some files to it. Fortunately, you can do this via the AWS CodeCommit console without having to install any Git clients. In this document, we will be using the AWS CodeCommit console to add the necessary files. However, feel free to use your favorite Git client if you prefer.
 
-1. Find your repo in `AWS CodeCommit Repositories Console <https://console.aws.amazon.com/codesuite/codecommit/repositories?#>`_.
-2. Add the ``codebuild-config.json`` file, so the CI-Bot knows that which CodeBuild project you want to use to run CI for this repo.
-2.1. You can click "Create File".
+- Find your repo in `AWS CodeCommit Repositories Console <https://console.aws.amazon.com/codesuite/codecommit/repositories?#>`_.
+- Add the ``codebuild-config.json`` file, so the CI-Bot knows that which CodeBuild project you want to use to run CI for this repo.
+    - You can click "Create File".
 
-.. image:: ./images/create-file.png
+    .. image:: ./images/create-file.png
 
-2.2. Post the following JSON body and add the file, set "File name" as ``codebuild-config.json``, put your "Author name" and "Email address", then click "Commit Changes":
+    - Post the following JSON body and add the file, set "File name" as ``codebuild-config.json``, put your "Author name" and "Email address", then click "Commit Changes":
 
-.. code-block:: javascript
+    .. code-block:: javascript
 
-    {
-        "jobs": [
-            {
-                "project_name": "aws_ci_bot_test-project",
-                "is_batch_job": false,
-                "buildspec": "",
-                "env_var": {}
-            }
-        ]
-    }
+        {
+            "jobs": [
+                {
+                    "project_name": "aws_ci_bot_test-project",
+                    "is_batch_job": false,
+                    "buildspec": "",
+                    "env_var": {}
+                }
+            ]
+        }
 
-.. image:: ./images/add-codebuild-config.png
+    .. image:: ./images/add-codebuild-config.png
 
-3. Add the ``buildspec.yml`` file, so the CodeBuild knows what to run in build job. In this example, it is just a dummy build job that runs a lot of ``echo`` commands.
-3.1. You can click "Add File", "Create File".
+- Add the ``buildspec.yml`` file, so the CodeBuild knows what to run in build job. In this example, it is just a dummy build job that runs a lot of ``echo`` commands.
+    - You can click "Add File", "Create File".
 
-.. image:: ./images/add-file.png
+    .. image:: ./images/add-file.png
 
-3.2. Put the following content and add the file, set "File name" as ``buildspec.yml``, put your "Author name" and "Email address", then click "Commit Changes":
+    - Put the following content and add the file, set "File name" as ``buildspec.yml``, put your "Author name" and "Email address", then click "Commit Changes":
 
-.. code-block:: yml
+    .. code-block:: yml
 
-    # Ref: https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html
-    version: 0.2
+        # Ref: https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html
+        version: 0.2
 
-    phases:
-      install:
-        runtime-versions:
-          python: 3.8
-        commands:
-          - echo "install phase"
-      pre_build:
-        commands:
-          - echo "pre_build phase"
-      build:
-        commands:
-          - echo "build phase"
-      post_build:
-        commands:
-          - echo "post_build phase"
+        phases:
+          install:
+            runtime-versions:
+              python: 3.8
+            commands:
+              - echo "install phase"
+          pre_build:
+            commands:
+              - echo "pre_build phase"
+          build:
+            commands:
+              - echo "build phase"
+          post_build:
+            commands:
+              - echo "post_build phase"
 
-.. image:: ./images/add-buildspec-yml.png
+    .. image:: ./images/add-buildspec-yml.png
 
-4. Add a ``chore.txt`` file. Because this is an example repo, we can simulate that we are adding new features by updating the content of the ``chore.txt`` file. You can click "Add File", "Create File", put ``hello world`` to the content, set "File name" as ``chore.txt``, put your "Author name" and "Email address", then click "Commit Changes"
+- Add a ``chore.txt`` file. Because this is an example repo, we can simulate that we are adding new features by updating the content of the ``chore.txt`` file. You can click "Add File", "Create File", put ``hello world`` to the content, set "File name" as ``chore.txt``, put your "Author name" and "Email address", then click "Commit Changes"
 
 Now the repo is all set. In production, we should also do this before checking in any real application code.
 

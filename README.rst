@@ -62,5 +62,6 @@ Welcome to ``aws_ci_bot`` Documentation
 - Customizable: you can add your own Python script, giving you the flexibility to implement complex CI build strategies tailored to your specific needs.
 - Flexible: you can apply different CI build strategies to different Git repositories or groups of repositories, providing you with the flexibility to optimize your CI pipeline.
 
+It may take 30 minutes for the first time deployment. And then, it usually takes 5 minutes for adding new projects, or deploying to new AWS Regions or new AWS Accounts.
 
 Please read the `FULL DOCUMENTATION HERE <https://aws-ci-bot.readthedocs.io/index.html>`_.

@@ -37,3 +37,8 @@ By default, the bot automatically puts an comment to the pull request that inclu
 - the last commit author and the commit message
 
 When the CI build job succeeded or failed, it will post a reply to the comment automatically.
+
+
+Next Step
+------------------------------------------------------------------------------
+Now, let's learn how to deploy the ``aws_ci_bot`` solution to your AWS Account. It may take 30 minutes for the first time deployment. And then, it usually takes 5 minutes for adding new projects, or deploying to new AWS Regions or new AWS Accounts.

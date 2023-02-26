@@ -10,6 +10,7 @@ sub packages and modules
 .. toctree::
     :maxdepth: 1
 
+    deploy <deploy/__init__>
     bootstrap <bootstrap>
     ci_data <ci_data>
     code_build_config <code_build_config>

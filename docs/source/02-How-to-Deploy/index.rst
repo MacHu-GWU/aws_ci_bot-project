@@ -57,11 +57,11 @@ Deploy the Solution
     pip install -e .
     pip install -r requirements-dev.txt
 
-3. (optional) Edit the python function ``def check_what_to_do()`` in the `codecommit_rule.py <./aws_ci_bot/codecommit_rule.py>`_ file. This function determines when to trigger an AWS CodeBuild build job based on your custom Git branching and commit rules, as well as which branch, tag, or commit to build from. The default settings are suitable for most use cases, but you can customize the function by following the comments provided.
+3. (optional) Edit the python function ``def check_what_to_do()`` in the `codecommit_rule.py <https://github.com/MacHu-GWU/aws_ci_bot-project/blob/main/aws_ci_bot/codecommit_rule.py#L24>`_ file. This function determines when to trigger an AWS CodeBuild build job based on your custom Git branching and commit rules, as well as which branch, tag, or commit to build from. The default settings are suitable for most use cases, but you can customize the function by following the comments provided.
 
-4. Edit the `deploy-config.json <./deploy/deploy-config.json>`_, follow the `instruction in the comment <https://github.com/MacHu-GWU/aws_ci_bot-project/blob/main/deploy/deploy-config.json>`_ to update the deployment config according to your needs.
+4. Edit the `deploy-config.json <https://github.com/MacHu-GWU/aws_ci_bot-project/blob/main/deploy/deploy-config.json>`_, follow the `instruction in the comment <https://github.com/MacHu-GWU/aws_ci_bot-project/blob/main/deploy/deploy-config.json>`_ to update the deployment config according to your needs.
 
-3. Run `deploy_aws_ci_bot.py <./deploy/deploy_aws_ci_bot.py>`_ script to deploy this solution to one region in your AWS Account.
+3. Run `deploy_aws_ci_bot.py <https://github.com/MacHu-GWU/aws_ci_bot-project/blob/main/deploy/deploy_aws_ci_bot.py>`_ script to deploy this solution to one region in your AWS Account.
 
 .. code-block:: bash
 
@@ -80,7 +80,7 @@ A Concrete Example
 
 CI Strategy Definition
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Below is the default CI strategy definition in the `codecommit_rule.py <./aws_ci_bot/codecommit_rule.py>`_ file. The default CI strategy is:
+Below is the default CI strategy definition in the `codecommit_rule.py <https://github.com/MacHu-GWU/aws_ci_bot-project/blob/main/aws_ci_bot/codecommit_rule.py#L24>`_ file. The default CI strategy is:
 
 - We don't build if commit message has 'chore'.
 - We don't build for direct commit.
@@ -203,7 +203,7 @@ Below is the default CI strategy definition in the `codecommit_rule.py <./aws_ci
 
 Deploy Config Definition
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Below is a sample ``deploy-config.json`` file. It defines that:
+Below is a sample `deploy-config.json <https://github.com/MacHu-GWU/aws_ci_bot-project/blob/main/deploy/deploy-config.json>`_ file. It defines that:
 
 - ``aws_ci_bot`` is the common name prefix for all AWS resources used in this solution.
 - on my local laptop, I use the ``my_aws_profile`` AWS CLI profile to deploy this solution.

@@ -66,7 +66,7 @@ Now this repo is all set for testing. In production, this is also the step we sh
 
 
 Trigger a Build Job by Creating a Pull Request
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------------------------------------------------
 In the :ref:`ci-strategy-definition` section, our CI strategy is:
 
 - We only build for 'Pull Request create / update' event, only if the source branch is the following pre-defined branch (please check the :ref:`ci-strategy-definition` for details), regardless of the target branch.

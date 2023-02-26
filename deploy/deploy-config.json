@@ -2,6 +2,9 @@
 // the ``aws_ci_bot`` solution
 // NOTE: this JSON file allow comments, you don't have to remove comment before deployment
 {
+    // the aws profile you want to use to run deployment script
+    "aws_profile": null,
+    "aws_region": null,
     // the common name prefix for AWS resources
     "project_name": "aws_ci_bot",
     // where you want to store CI/CD event data as a back up

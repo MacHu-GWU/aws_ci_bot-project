@@ -48,6 +48,7 @@ def install_aws_ci_bot_dependencies():
             "install",
             f"{line}",
             "--no-deps",
+            "--disable-pip-version-check",
             "--target",
             f"{dir_build_deployment_package}",
         ]
@@ -60,6 +61,7 @@ def install_aws_ci_bot():
         "install",
         f"{dir_project_root}",
         "--no-deps",
+        "--disable-pip-version-check",
         "--target",
         f"{dir_build_deployment_package}",
     ]

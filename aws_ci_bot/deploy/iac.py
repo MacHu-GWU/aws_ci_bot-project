@@ -152,7 +152,13 @@ class Stack(cf.Stack):
 
         self.iam_policy_for_lambda = iam.Policy(
             "IamPolicyForLambda",
-            rp_PolicyName=f"{self.project_name_slug}-lambda-policy",
+            rp_PolicyName=cf.Sub(
+                string="${project_name}-${aws_region}-lambda-policy",
+                data=dict(
+                    project_name=self.project_name_slug,
+                    aws_region=cf.AWS_REGION,
+                ),
+            ),
             rp_PolicyDocument=encode_policy_document(
                 [
                     self.stat_s3,
@@ -290,7 +296,13 @@ class Stack(cf.Stack):
 
         self.iam_policy_for_codebuild = iam.Policy(
             "IamPolicyForCodeBuild",
-            rp_PolicyName=f"{self.project_name_slug}-codebuild-policy",
+            rp_PolicyName=cf.Sub(
+                string="${project_name}-${aws_region}-codebuild-policy",
+                data=dict(
+                    project_name=self.project_name_slug,
+                    aws_region=cf.AWS_REGION,
+                ),
+            ),
             rp_PolicyDocument=encode_policy_document(
                 [self.stat_codecommit_many_permissions]
             ),
@@ -405,6 +417,7 @@ class Stack(cf.Stack):
             repo = codecommit.Repository(
                 "CodeCommitRepo{}".format(repo_name.replace("_", "").replace("-", "")),
                 rp_RepositoryName=repo_name,
+                # don't delete repo when you delete CloudFormation stack
                 ra_DeletionPolicy=cf.DeletionPolicyEnum.Retain,
             )
             self.codecommit_repos.append(repo)
@@ -442,6 +455,7 @@ class Stack(cf.Stack):
                 p_TimeoutInMinutes=codebuild_project.timeout_in_minutes,
                 p_QueuedTimeoutInMinutes=codebuild_project.queued_timeout_in_minutes,
                 p_ConcurrentBuildLimit=codebuild_project.concurrent_build_limit,
+                # don't delete build project when you delete CloudFormation stack
                 ra_DeletionPolicy=cf.DeletionPolicyEnum.Retain,
                 ra_DependsOn=[
                     self.iam_role_for_codebuild,

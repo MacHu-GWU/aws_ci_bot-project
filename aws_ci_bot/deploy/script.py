@@ -79,8 +79,8 @@ def deploy_aws_ci_bot(
     # upload
     project_md5 = get_project_md5(path_requirements, dir_python_lib)
     s3path_deployment_package = S3Path(
-        deploy_config["s3_bucket"],
-        deploy_config["s3_prefix"],
+        deploy_config.s3_bucket,
+        deploy_config.s3_prefix,
         "lambda",
         path_lambda_deployment_package.stem,
         f"{project_md5}.zip",

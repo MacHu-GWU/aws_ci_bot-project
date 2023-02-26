@@ -25,10 +25,14 @@ def check_what_to_do(cc_event: CodeCommitEvent) -> CodeCommitHandlerActionEnum:
     """
     Analyze the CodeCommit event, check what to do.
 
-    This function defines whether we should trigger an AWS CodeBuild build job.
+    This function determines when to trigger an AWS CodeBuild build job based
+    on your custom Git branching and commit rules, as well as
+    which branch, tag, or commit to build from. The default settings are suitable
+    for most use cases, but you can customize the function by following
+    the comments provided.
+
     This solution designed for any type of project for any programming language
-    and for any Git Workflow. This function allow you to customize your own
-    git branching rule and git commit rule, decide when to trigger the build.
+    and for any Git Workflow.
 
     This function should take a ``CodeCommitEvent`` object as input, and return
     a ``CodeCommitHandlerActionEnum`` object.

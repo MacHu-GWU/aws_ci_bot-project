@@ -114,7 +114,7 @@ if __name__ == "__main__":
     CLASSIFIERS = [
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
         "Natural Language :: English",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: MacOS",
@@ -219,6 +219,7 @@ Frequent used classifiers List::
         "License :: OSI Approved :: BSD License",
         "License :: OSI Approved :: Apache Software License",
         "License :: OSI Approved :: GNU General Public License (GPL)",
+        "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
         "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
     
         "Natural Language :: English",

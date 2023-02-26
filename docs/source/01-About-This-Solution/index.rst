@@ -4,12 +4,12 @@ About This Solution
 
 Summary
 ------------------------------------------------------------------------------
-AWS CI BOT is a fully serverless, scalable, customizable, flexible solution that allows you to set up a production ready CI/CD pipeline for many git repositories on many AWS Account.
+AWS CI BOT is a fully serverless, scalable, customizable, flexible solution that allows you to set up a production ready CI build pipeline for as many git repositories on as many AWS Accounts.
 
-- Serverless: this solution doesn't require any server to be set up. It is fully serverless and can be deployed in a few minutes.
-- Scalable: this solution can be deployed to multiple AWS Regions and multiple AWS Accounts, and can support arbitrary many git repositories and CI build projects.
-- Customizable: you can customize the CI behavior by adding your own Python script, it allows you to implement arbitrary complex CI build strategies to fullfill your needs.
-- Flexible: you can apply different CI build strategies to different git repositories or group of git repositories.
+- Serverless: this solution is fully serverless, meaning there is no need to set up any servers. It can be deployed in just a few minutes.
+- Scalable: you can deploy our solution to multiple AWS regions and accounts, and it can support large number of Git repositories and CI build projects.
+- Customizable: you can add your own Python script, giving you the flexibility to implement complex CI build strategies tailored to your specific needs.
+- Flexible: you can apply different CI build strategies to different Git repositories or groups of repositories, providing you with the flexibility to optimize your CI pipeline.
 
 
 How it Work

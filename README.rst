@@ -1,4 +1,4 @@
-.. .. image:: https://readthedocs.org/projects/aws_ci_bot/badge/?version=latest
+.. image:: https://readthedocs.org/projects/aws_ci_bot/badge/?version=latest
     :target: https://aws_ci_bot.readthedocs.io/index.html
     :alt: Documentation Status
 
@@ -22,7 +22,7 @@
 
 ------
 
-.. .. image:: https://img.shields.io/badge/Link-Document-blue.svg
+.. image:: https://img.shields.io/badge/Link-Document-blue.svg
     :target: https://aws_ci_bot.readthedocs.io/index.html
 
 .. .. image:: https://img.shields.io/badge/Link-API-blue.svg
@@ -49,17 +49,12 @@
 
 Welcome to ``aws_ci_bot`` Documentation
 ==============================================================================
-🤖 ``aws_ci_bot`` is a open source solution that allow you to create an CI/CD platform that is similar to "Jenkins", "GitHub Action", "CircleCI", "GitLab CI" in 30 minutes, in an empty "AWS Account" using AWS CodeCommit as the git repository, AWS CodeBuild as the CI build runtime, and the AWS Lambda Function as the CI-Bot.
+🤖 ``aws_ci_bot`` is a fully serverless, scalable, customizable, flexible solution that allows you to set up a production ready CI build pipeline for as many git repositories on as many AWS Accounts.
 
-It comes with a lot more advanced features that is highly customizable:
+- Serverless: this solution is fully serverless, meaning there is no need to set up any servers. It can be deployed in just a few minutes.
+- Scalable: you can deploy our solution to multiple AWS regions and accounts, and it can support large number of Git repositories and CI build projects.
+- Customizable: you can add your own Python script, giving you the flexibility to implement complex CI build strategies tailored to your specific needs.
+- Flexible: you can apply different CI build strategies to different Git repositories or groups of repositories, providing you with the flexibility to optimize your CI pipeline.
 
-1. Automatically post comment, reply to your Pull Request activity about your CI job run status, code artifacts you just put, applications you just deployed.
-2. Highly customizable trigger rules, allow you to use ``branch name``, ``commit message`` and everything to write your own rules to define "**when to trigger build and what exactly to build**", in pure python IF ELSE syntax.
-3. Allow to use a Human-in-loop GUI to approve, deny build job run, from your browser or your cell phone, please see my ``aws_cicd_hil-project`` repo.
 
-.. image:: ./images/comment-bot.png
-
-.. contents::
-    :class: this-will-duplicate-information-and-it-is-still-useful-here
-    :depth: 1
-    :local:
+Please read the `FULL DOCUMENTATION HERE <https://aws-ci-bot.readthedocs.io/index.html>`_.

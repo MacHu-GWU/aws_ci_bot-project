@@ -33,9 +33,9 @@ class CodeBuildProject(AttrsClass):
 
 @attr.s
 class DeployConfig(AttrsClass):
+    project_name: str = attr.ib()
     aws_profile: T.Optional[str] = attr.ib()
     aws_region: T.Optional[str] = attr.ib()
-    project_name: str = attr.ib()
     s3_bucket: str = attr.ib()
     s3_prefix: str = attr.ib()
     codecommit_repo_list: T.List[str] = attr.ib(factory=list)

@@ -355,3 +355,8 @@ Below is the sample command line prompt when I run ``python ./deploy/deploy_aws_
       done
 
 .. image:: ./images/create-cloudformation-stack.png
+
+
+Next Step
+------------------------------------------------------------------------------
+We successfully deployed the ``aws_ci_bot`` solution to your AWS Account. Now let's use a dummy CodeCommit repository to test this solution.

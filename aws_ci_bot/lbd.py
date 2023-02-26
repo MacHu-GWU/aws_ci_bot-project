@@ -15,8 +15,8 @@ from .sns_event import (
 from .codecommit import CodeCommitEventHandler
 from .codebuild import CodeBuildEventHandler
 
-S3_BUCKET = os.environ["S3_BUCKET"]
-S3_PREFIX = os.environ["S3_PREFIX"]
+S3_BUCKET = os.environ.get("S3_BUCKET")
+S3_PREFIX = os.environ.get("S3_PREFIX")
 
 bsm = BotoSesManager()
 

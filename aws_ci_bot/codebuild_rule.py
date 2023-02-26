@@ -13,6 +13,8 @@ class CodeBuildHandlerActionEnum(str, enum.Enum):
 def check_what_to_do(cb_event: CodeBuildEvent) -> CodeBuildHandlerActionEnum:
     """
     Analyze the CodeBuild event, check what to do.
+
+    This function should take a ``CodeBuildEvent`` object, and return
     """
     logger.header("Check what to do", "-", 60)
     logger.info("  do nothing for State Change IN_PROGRESS")

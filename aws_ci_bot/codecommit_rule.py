@@ -20,22 +20,36 @@ class CodeCommitHandlerActionEnum(str, enum.Enum):
 
 def check_what_to_do(cc_event: CodeCommitEvent) -> CodeCommitHandlerActionEnum:
     """
-    Analyze the CodeBuild event, check what to do.
+    Analyze the CodeCommit event, check what to do.
 
     This function defines whether we should trigger an AWS CodeBuild build job.
     This solution designed for any type of project for any programming language
     and for any Git Workflow. This function allow you to customize your own
     git branching rule and git commit rule, decide when to trigger the build.
+
+    This function should take a ``CodeCommitEvent`` object as input, and return
+    a ``CodeCommitHandlerActionEnum`` object as output.
     """
     logger.header("Detect whether we should trigger build", "-", 60)
 
-    # won't trigger build direct commit
+    # ==========================================================================
+    # Case: direct commit to any branch
+    #
+    # either you write your own if/else logic here,
+    # either you uncomment one and only one of the following block of code.
+    # ==========================================================================
     if cc_event.is_commit_event:
+        # ----------------------------------------------------------------------
+        # Don't build for direct commit
+        # ----------------------------------------------------------------------
         logger.info(
             f"we don't trigger build job for "
             f"event type {cc_event.event_type!r} on {cc_event.source_branch}"
         )
         return CodeCommitHandlerActionEnum.nothing
+        # ----------------------------------------------------------------------
+        # Only build for direct commit to master branch
+        # ----------------------------------------------------------------------
     # run build job if it is a Pull Request related event
     elif cc_event.is_pr_created_event or cc_event.is_pr_update_event:
         # we don't trigger if commit message has 'NO BUILD'

@@ -24,7 +24,7 @@
     // the list of CodeCommit repo you want to create
     "codecommit_repo_list": [
         "aws_ci_bot_test-project",
-        "aws_python-project"
+        "dataops_example-project"
     ],
     // the list of CodeBuild project you want to create
     // one CodeCommit repo may trigger multiple CodeBuild projects
@@ -58,9 +58,9 @@
         },
         {
             // the name of the CodeBuild project
-            "project_name": "aws_python-project",
+            "project_name": "dataops_example-project",
             // the CodeCommit repo name that you want to build from
-            "repo_name": "aws_python-project",
+            "repo_name": "dataops_example-project",
             // the environment type to run the build job
             // you can see full list of available compute types in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-type

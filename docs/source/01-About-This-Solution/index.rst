@@ -38,7 +38,30 @@ By default, the bot automatically puts an comment to the pull request that inclu
 
 When the CI build job succeeded or failed, it will post a reply to the comment automatically.
 
+Here are some more examples of ``aws_ci_bot`` automatically doing code review for a Microservice application project.
+
+Deploy infrastructure as code (IAC) via AWS CloudFormation:
+
+.. image:: ./images/pr-for-iac.png
+
+Build versioned AWS Lambda Function dependency layer:
+
+.. image:: ./images/pr-for-lambda-layer.png
+
+Deploy multiple AWS Lambda Functions, event source mapping configuration, and API Gateway definition:
+
+.. image:: ./images/pr-for-lambda-app-deploy.png
+
+Deploy a Human-in-the-loop review workflow:
+
+.. image:: ./images/pr-for-hil.png
+
+Release the application to ``prod`` environment, and create immutable deploy artifacts in case we need rollback:
+
+.. image:: ./images/pr-for-release-to-prod.png
+
 
 Next Step
 ------------------------------------------------------------------------------
 Now, let's learn how to deploy the ``aws_ci_bot`` solution to your AWS Account. It may take 30 minutes for the first time deployment. And then, it usually takes 5 minutes for adding new projects, or deploying to new AWS Regions or new AWS Accounts.
+

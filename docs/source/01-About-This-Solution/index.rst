@@ -40,23 +40,23 @@ When the CI build job succeeded or failed, it will post a reply to the comment a
 
 Here are some more examples of ``aws_ci_bot`` automatically doing code review for a Microservice application project.
 
-Deploy infrastructure as code (IAC) via AWS CloudFormation:
+**Deploy infrastructure as code (IAC) via AWS CloudFormation**:
 
 .. image:: ./images/pr-for-iac.png
 
-Build versioned AWS Lambda Function dependency layer:
+**Build versioned AWS Lambda Function dependency layer**:
 
 .. image:: ./images/pr-for-lambda-layer.png
 
-Deploy multiple AWS Lambda Functions, event source mapping configuration, and API Gateway definition:
+**Deploy multiple AWS Lambda Functions, event source mapping configuration, and API Gateway definition**:
 
 .. image:: ./images/pr-for-lambda-app-deploy.png
 
-Deploy a Human-in-the-loop review workflow:
+**Deploy a Human-in-the-loop review workflow**:
 
 .. image:: ./images/pr-for-hil.png
 
-Release the application to ``prod`` environment, and create immutable deploy artifacts in case we need rollback:
+**Release the application to** ``prod`` **environment, and create immutable deploy artifacts in case we need rollback**:
 
 .. image:: ./images/pr-for-release-to-prod.png
 

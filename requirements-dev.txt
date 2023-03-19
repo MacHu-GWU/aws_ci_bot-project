@@ -1,6 +1,8 @@
 # This requirements file should only include dependencies for development
 twine                                   # make distribution archive
 wheel                                   # make pre-compiled distribution package
+attrs==21.4.0
+attrs_mate==1.0.2
 pathlib_mate==1.2.1
 s3pathlib==1.4.1
 aws_cloudformation==1.2.1

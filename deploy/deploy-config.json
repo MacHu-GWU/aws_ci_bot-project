@@ -19,11 +19,11 @@
     "aws_region": "us-east-1",
     // where you want to store Lambda deploymeng package,
     // CloudFormation template upload, and CI/CD event data.
-    "s3_bucket": "651220992714-us-east-1-artifacts",
+    "s3_bucket": "807388292768-us-east-1-artifacts",
     "s3_prefix": "projects/aws-ci-bot/",
     // the list of CodeCommit repo you want to create
     "codecommit_repo_list": [
-        "aws_ci_bot_test-project"
+        "aws_ami_with_packer-project"
     ],
     // the list of CodeBuild project you want to create
     // one CodeCommit repo may trigger multiple CodeBuild projects
@@ -32,9 +32,9 @@
         // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html
         {
             // the name of the CodeBuild project
-            "project_name": "aws_ci_bot_test-project",
+            "project_name": "aws_ami_with_packer-project",
             // the CodeCommit repo name that you want to build from
-            "repo_name": "aws_ci_bot_test-project",
+            "repo_name": "aws_ami_with_packer-project",
             // the environment type to run the build job
             // you can see full list of available compute types in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-type
@@ -45,14 +45,14 @@
             // https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html
             // you can find more information about this config in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-image
-            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
+            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:4.0",
             // the instance type to run the build job
             // you can see full list of available compute types in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-computetype
             "compute_type": "BUILD_GENERAL1_SMALL",
-            "privileged_mode": true, // if you need to build docker in docker, then set true, otherwise use false
-            "timeout_in_minutes": 15, // how long the build job will time out
-            "queued_timeout_in_minutes": 30, // how long the build job will be queued before it is timed out
+            "privileged_mode": false, // if you need to build docker in docker, then set true, otherwise use false
+            "timeout_in_minutes": 60, // how long the build job will time out
+            "queued_timeout_in_minutes": 60, // how long the build job will be queued before it is timed out
             "concurrent_build_limit": 5 // maximum number of concurrent builds
         }
     ]

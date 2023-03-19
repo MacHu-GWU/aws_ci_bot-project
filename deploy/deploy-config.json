@@ -15,7 +15,7 @@
     // if you want to use a custom policy, please refer to the
     // "Pre-requisites" section in the "How to Deploy" document to identify
     // the required permissions
-    "aws_profile": "aws_data_lab_dataops",
+    "aws_profile": "awshsh_app_dev_us_east_1",
     "aws_region": "us-east-1",
     // where you want to store Lambda deploymeng package,
     // CloudFormation template upload, and CI/CD event data.

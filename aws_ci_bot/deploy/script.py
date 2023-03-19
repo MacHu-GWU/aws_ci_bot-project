@@ -62,6 +62,10 @@ def get_project_md5(
     return md5.hexdigest()
 
 
+class UserAbortError(Exception):
+    pass
+
+
 def deploy_aws_ci_bot(
     deploy_config: DeployConfig,
 ):
@@ -72,6 +76,19 @@ def deploy_aws_ci_bot(
         kwargs["region_name"] = deploy_config.aws_region
     bsm = BotoSesManager(**kwargs)
     context.attach_boto_session(bsm.boto_ses)
+
+    print(f"❗ you are trying to deploy aws ci bot to {bsm.aws_account_id!r} {bsm.aws_region!r}")
+    try:
+        res = bsm.iam_client.list_account_aliases()
+        account_alias = res["AccountAliases"][0]
+        print(f"  the account alias is {account_alias!r}")
+        decision = input("  continue? [y/n]: ").strip()
+        if decision != "y":
+            raise UserAbortError("🛑 user abort!")
+    except UserAbortError as e:
+        raise e
+    except Exception:
+        pass
 
     # build and upload lambda deployment package to S3
     # build

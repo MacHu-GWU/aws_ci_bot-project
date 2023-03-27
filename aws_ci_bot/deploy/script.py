@@ -134,6 +134,7 @@ def deploy_aws_ci_bot(
     env.deploy(
         stack_name=stack.stack_name,
         template=tpl,
+        bucket=f"{bsm.aws_account_id}-{bsm.aws_region}-artifacts",
         include_named_iam=True,
         skip_prompt=True,
         timeout=180,

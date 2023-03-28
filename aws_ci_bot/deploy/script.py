@@ -80,7 +80,10 @@ def deploy_aws_ci_bot(
     print(f"❗ you are trying to deploy aws ci bot to {bsm.aws_account_id!r} {bsm.aws_region!r}")
     try:
         res = bsm.iam_client.list_account_aliases()
-        account_alias = res["AccountAliases"][0]
+        if len(res["AccountAliases"]):
+            account_alias = res["AccountAliases"][0]
+        else:
+            account_alias = "unknown account alias"
         print(f"  the account alias is {account_alias!r}")
         decision = input("  continue? [y/n]: ").strip()
         if decision != "y":
@@ -88,7 +91,7 @@ def deploy_aws_ci_bot(
     except UserAbortError as e:
         raise e
     except Exception:
-        pass
+        raise
 
     # build and upload lambda deployment package to S3
     # build

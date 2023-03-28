@@ -201,6 +201,79 @@ Below is the default CI strategy definition in the `codecommit_rule.py <https://
             return CodeCommitHandlerActionEnum.nothing
 
 
+AWS Lambda and CodeBuild IAM Permissions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The default IAM permission should work out-of-the-box. However, if you want to, you can change it by editing the ``aws_ci_bot/deploy/iac.py`` file.
+
+For Lambda IAM Role, it follows the `least-privilege permissions <https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege>`_ principle. It only has the basic execution role and necessary permission to access S3, CodeCommit and CodeBuild.
+
+.. code-block:: python
+
+    self.iam_role_for_lambda = iam.Role(
+        "IamRoleForLambda",
+        p_RoleName=cf.Sub(
+            string="${project_name}-${aws_region}-lambda-role",
+            data=dict(
+                project_name=self.project_name_slug,
+                aws_region=cf.AWS_REGION,
+            ),
+        ),
+        rp_AssumeRolePolicyDocument=cf.helpers.iam.AssumeRolePolicyBuilder(
+            cf.helpers.iam.ServicePrincipal.awslambda(),
+        ).build(),
+        p_ManagedPolicyArns=[
+            cf.helpers.iam.AwsManagedPolicy.AWSLambdaBasicExecutionRole,
+        ],
+    )
+
+    self.iam_policy_for_lambda = iam.Policy(
+        "IamPolicyForLambda",
+        rp_PolicyName=cf.Sub(
+            string="${project_name}-${aws_region}-lambda-policy",
+            data=dict(
+                project_name=self.project_name_slug,
+                aws_region=cf.AWS_REGION,
+            ),
+        ),
+        rp_PolicyDocument=encode_policy_document(
+            [
+                self.stat_s3,
+                self.stat_codecommit_permissin_for_lambda,
+                self.stat_codebuild_permission_for_lambda,
+            ]
+        ),
+        p_Roles=[
+            self.iam_role_for_lambda.ref(),
+        ],
+        ra_DependsOn=self.iam_role_for_lambda,
+    )
+
+For CodeBuild IAM Role, it uses the ``AdministratorAccess`` policy by default. The CodeBuild is the runtime to run deployment scripts, it usually should have more permissions than human. However, you can change it to a more specific policy by updating the following code block:
+
+.. code-block:: python
+
+    self.iam_role_for_codebuild = iam.Role(
+        "IamRoleForCodeBuild",
+        p_RoleName=cf.Sub(
+            string="${project_name}-${aws_region}-codebuild-role",
+            data=dict(
+                project_name=self.project_name_slug,
+                aws_region=cf.AWS_REGION,
+            ),
+        ),
+        rp_AssumeRolePolicyDocument=cf.helpers.iam.AssumeRolePolicyBuilder(
+            cf.helpers.iam.ServicePrincipal.codebuild(),
+        ).build(),
+        p_ManagedPolicyArns=[
+            # by default, we use Admin policy for codebuild
+            # you can change it to a more specific policy
+            cf.helpers.iam.AwsManagedPolicy.AdministratorAccess,
+        ],
+    )
+
+Note: the infrastructure as code tool used in this project is `cottonformation <https://github.com/MacHu-GWU/cottonformation-project>`_, it is a pure python tool that allow you to declare infrastructure as code in Python.
+
+
 Deploy Config Definition
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Below is a sample `deploy-config.json <https://github.com/MacHu-GWU/aws_ci_bot-project/blob/main/deploy/deploy-config.json>`_ file. It defines that:

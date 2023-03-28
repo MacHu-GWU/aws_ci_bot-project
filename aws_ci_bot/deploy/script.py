@@ -68,7 +68,14 @@ class UserAbortError(Exception):
 
 def deploy_aws_ci_bot(
     deploy_config: DeployConfig,
+    timeout: int = 180,
 ):
+    """
+    Deploy the aws_ci_bot solution to the target AWS account and region.
+
+    :param deploy_config:
+    :param timeout: CloudFormation deployment timeout in seconds
+    """
     kwargs = dict()
     if deploy_config.aws_profile is not None:
         kwargs["profile_name"] = deploy_config.aws_profile
@@ -79,10 +86,13 @@ def deploy_aws_ci_bot(
 
     print(f"❗ you are trying to deploy aws ci bot to {bsm.aws_account_id!r} {bsm.aws_region!r}")
     try:
-        res = bsm.iam_client.list_account_aliases()
-        if len(res["AccountAliases"]):
-            account_alias = res["AccountAliases"][0]
-        else:
+        try:
+            res = bsm.iam_client.list_account_aliases()
+            if len(res["AccountAliases"]):
+                account_alias = res["AccountAliases"][0]
+            else:
+                account_alias = "unknown account alias"
+        except:
             account_alias = "unknown account alias"
         print(f"  the account alias is {account_alias!r}")
         decision = input("  continue? [y/n]: ").strip()
@@ -139,6 +149,6 @@ def deploy_aws_ci_bot(
         template=tpl,
         include_named_iam=True,
         skip_prompt=True,
-        timeout=180,
-        change_set_timeout=180,
+        timeout=timeout,
+        change_set_timeout=timeout,
     )

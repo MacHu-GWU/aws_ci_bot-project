@@ -189,6 +189,8 @@ class Stack(cf.Stack):
                 cf.helpers.iam.ServicePrincipal.codebuild(),
             ).build(),
             p_ManagedPolicyArns=[
+                # by default, we use Admin policy for codebuild
+                # you can change it to a more specific policy
                 cf.helpers.iam.AwsManagedPolicy.AdministratorAccess,
             ],
         )

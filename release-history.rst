@@ -10,9 +10,30 @@ Backlog
 
 **Minor Improvements**
 
+- use `wait condition <https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-waitcondition.html>`_ to deploy this solution in one shot.
+
 **Bugfixes**
 
 **Miscellaneous**
+
+
+0.5.1 (2023-03-28)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Features and Improvements**
+
+- Prompt to ask user to type "y" to proceed the deployment.
+
+**Minor Improvements**
+
+- Allow user to customize the CloudFormation timeout time.
+
+**Bugfixes**
+
+- Fix a bug that the Lambda function IAM role doesn't have the permission to create Cloudwatch log group.
+
+**Miscellaneous**
+
+- Improve documentation.
 
 
 0.4.1 (2022-02-26)

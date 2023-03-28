@@ -67,6 +67,9 @@ class Stack(cf.Stack):
             rp_AssumeRolePolicyDocument=cf.helpers.iam.AssumeRolePolicyBuilder(
                 cf.helpers.iam.ServicePrincipal.awslambda(),
             ).build(),
+            p_ManagedPolicyArns=[
+                cf.helpers.iam.AwsManagedPolicy.AWSLambdaBasicExecutionRole,
+            ],
         )
         self.rg_1_iam.add(self.iam_role_for_lambda)
 

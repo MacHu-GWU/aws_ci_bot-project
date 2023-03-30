@@ -50,7 +50,7 @@
             // https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html
             // you can find more information about this config in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-image
-            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:4.0",
+            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
             // the instance type to run the build job
             // you can see full list of available compute types in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-computetype
@@ -75,7 +75,7 @@
             // https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html
             // you can find more information about this config in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-image
-            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:4.0",
+            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
             // the instance type to run the build job
             // you can see full list of available compute types in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-computetype
@@ -100,7 +100,7 @@
             // https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html
             // you can find more information about this config in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-image
-            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:4.0",
+            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
             // the instance type to run the build job
             // you can see full list of available compute types in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-computetype
@@ -125,7 +125,7 @@
             // https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html
             // you can find more information about this config in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-image
-            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:4.0",
+            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
             // the instance type to run the build job
             // you can see full list of available compute types in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-computetype
@@ -151,7 +151,7 @@
             // https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html
             // you can find more information about this config in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-image
-            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:4.0",
+            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
             // the instance type to run the build job
             // you can see full list of available compute types in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-computetype
@@ -176,7 +176,7 @@
             // https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html
             // you can find more information about this config in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-image
-            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:4.0",
+            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
             // the instance type to run the build job
             // you can see full list of available compute types in this document
             // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-environment.html#cfn-codebuild-project-environment-computetype

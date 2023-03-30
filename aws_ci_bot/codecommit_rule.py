@@ -157,6 +157,11 @@ def check_what_to_do(cc_event: CodeCommitEvent) -> CodeCommitHandlerActionEnum:
             or is_certain_semantic_branch(cc_event.source_branch, ["prod"])
             or is_certain_semantic_branch(cc_event.source_branch, ["blue"])
             or is_certain_semantic_branch(cc_event.source_branch, ["green"])
+            # based on semantic branch
+            or is_certain_semantic_branch(cc_event.source_branch, ["layer"])
+            or is_certain_semantic_branch(cc_event.source_branch, ["lambda"])
+            or is_certain_semantic_branch(cc_event.source_branch, ["glue"])
+            or is_certain_semantic_branch(cc_event.source_branch, ["hil"])
         ):
             logger.info(
                 f"trigger build for pull request from {cc_event.source_branch!r} branch."

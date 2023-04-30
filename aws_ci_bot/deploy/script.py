@@ -147,7 +147,7 @@ def deploy_aws_ci_bot(
     env.deploy(
         stack_name=stack.stack_name,
         template=tpl,
-        bucket="807388292768-us-east-1-artifacts",
+        bucket="878625312159-us-east-1-artifacts",
         include_named_iam=True,
         skip_prompt=True,
         timeout=timeout,

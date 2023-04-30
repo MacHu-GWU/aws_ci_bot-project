@@ -23,7 +23,9 @@
     "s3_prefix": "projects/aws-ci-bot/",
     // the list of CodeCommit repo you want to create
     "codecommit_repo_list": [
-        "aws_codeartifact_python-project"
+        "aws_codeartifact_python-project",
+        "wserver_ami-project",
+        "wserver_controller-project"
     ],
     // the list of CodeBuild project you want to create
     // one CodeCommit repo may trigger multiple CodeBuild projects
@@ -54,6 +56,28 @@
             "timeout_in_minutes": 15, // how long the build job will time out
             "queued_timeout_in_minutes": 30, // how long the build job will be queued before it is timed out
             "concurrent_build_limit": 1 // maximum number of concurrent builds
+        },
+        {
+            "project_name": "wserver_ami-project",
+            "repo_name": "wserver_ami-project",
+            "environment_type": "LINUX_CONTAINER",
+            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
+            "compute_type": "BUILD_GENERAL1_SMALL",
+            "privileged_mode": true,
+            "timeout_in_minutes": 15,
+            "queued_timeout_in_minutes": 30,
+            "concurrent_build_limit": 1
+        },
+        {
+            "project_name": "wserver_controller-project",
+            "repo_name": "wserver_controller-project",
+            "environment_type": "LINUX_CONTAINER",
+            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
+            "compute_type": "BUILD_GENERAL1_SMALL",
+            "privileged_mode": true,
+            "timeout_in_minutes": 15,
+            "queued_timeout_in_minutes": 30,
+            "concurrent_build_limit": 1
         }
     ]
 }

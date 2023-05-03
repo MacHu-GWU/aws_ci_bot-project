@@ -27,7 +27,8 @@
         "aws_resource_scheduler-project",
         "wserver_ami-project",
         "wserver_ops-project",
-        "wserver_controller-project"
+        "wserver_controller-project",
+        "wserver_db_bot-project"
     ],
     // the list of CodeBuild project you want to create
     // one CodeCommit repo may trigger multiple CodeBuild projects
@@ -95,6 +96,17 @@
         {
             "project_name": "wserver_controller-project",
             "repo_name": "wserver_controller-project",
+            "environment_type": "LINUX_CONTAINER",
+            "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
+            "compute_type": "BUILD_GENERAL1_SMALL",
+            "privileged_mode": true,
+            "timeout_in_minutes": 15,
+            "queued_timeout_in_minutes": 30,
+            "concurrent_build_limit": 1
+        },
+        {
+            "project_name": "wserver_db_bot-project",
+            "repo_name": "wserver_db_bot-project",
             "environment_type": "LINUX_CONTAINER",
             "image_id": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
             "compute_type": "BUILD_GENERAL1_SMALL",
